@@ -1,0 +1,1863 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>CIANJUR PHARMACY FC</title>
+    
+    <!-- PWA Manifest & App Metas -->
+    <meta name="theme-color" content="#111827">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="CPFC App">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Library html2canvas -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    
+    <style>
+        .player-img-click {
+            transition: transform 0.15s ease-in-out, filter 0.15s ease-in-out;
+            cursor: pointer;
+        }
+        .player-img-click:active {
+            transform: scale(0.95);
+            filter: brightness(1.2);
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-white p-4 max-w-md mx-auto pb-20 font-sans select-none">
+
+    <!-- BAR MODE ADMIN -->
+    <div id="barAdminStatus" class="bg-gray-800 border border-gray-700 p-2 rounded-lg mb-3 flex justify-between items-center text-xs">
+        <span id="textStatusMode" class="text-gray-400">👁️ Mode: <strong class="text-blue-400">Hanya Lihat (Pengunjung)</strong></span>
+        <button id="btnToggleAdmin" onclick="toggleAdminMode()" class="bg-yellow-600 hover:bg-yellow-500 text-black font-bold px-2 py-1 rounded text-[10px]">
+            🔓 Login Admin
+        </button>
+    </div>
+
+    <!-- HEADER & LOGO KLUB -->
+    <div class="bg-red-950 border border-yellow-500 p-4 rounded-lg text-center mb-4 shadow flex flex-col items-center relative">
+        <div class="relative mb-2">
+            <img id="imgLogo" src="https://via.placeholder.com/80/800000/FFFFFF?text=CPFC" alt="Logo" class="w-20 h-20 object-cover rounded-full border-2 border-yellow-500">
+            <label for="inputLogo" class="only-admin hidden absolute bottom-0 right-0 bg-yellow-500 text-black p-1 rounded-full text-[10px] font-bold cursor-pointer">📷</label>
+            <input type="file" id="inputLogo" accept="image/*" class="hidden" onchange="uploadLogo(event)">
+        </div>
+        <h1 class="text-xl font-black text-yellow-500 tracking-wider">CIANJUR PHARMACY</h1>
+        <p class="text-xs text-gray-300">MINI SOCCER CLUB • EST. 2026</p>
+        
+        <div class="mt-2 pt-2 border-t border-yellow-500/30 w-full text-center">
+            <div id="liveDate" class="text-[11px] font-medium text-gray-300"></div>
+            <div id="liveTime" class="text-sm font-bold text-yellow-400 tracking-widest"></div>
+        </div>
+    </div>
+
+    <!-- TAB NAVIGASI -->
+    <div class="flex border-b border-gray-700 mb-4 text-center text-xs font-bold overflow-x-auto">
+        <button onclick="setTab('beranda')" id="btnTab0" class="flex-1 py-2 text-yellow-500 border-b-2 border-yellow-500 whitespace-nowrap px-2">🏠 Beranda</button>
+        <button onclick="setTab('banner')" id="btnTabBanner" class="flex-1 py-2 text-gray-400 whitespace-nowrap px-2">🎨 Banner</button>
+        <button onclick="setTab('absenKas')" id="btnTab1" class="flex-1 py-2 text-gray-400 whitespace-nowrap px-2">💰 Data kas klub</button>
+        <button onclick="setTab('galeriPemain')" id="btnTab4" class="flex-1 py-2 text-gray-400 whitespace-nowrap px-2">⚽ Pemain</button>
+        <button onclick="setTab('galeriKlub')" id="btnTab5" class="flex-1 py-2 text-gray-400 whitespace-nowrap px-2">📸 Galeri</button>
+        <button onclick="setTab('anggota')" id="btnTab3" class="flex-1 py-2 text-gray-400 whitespace-nowrap px-2">👥 Anggota</button>
+    </div>
+
+    <!-- TAB 0: BERANDA -->
+    <div id="tabBeranda" class="space-y-4">
+        <div class="bg-gray-800 border border-yellow-500/50 p-3 rounded-lg shadow space-y-2">
+            <div class="flex justify-between items-center">
+                <span class="text-xs font-bold text-yellow-500 flex items-center gap-1">📢 PENGUMUMAN KLUB</span>
+                <button onclick="editPengumuman()" class="only-admin hidden text-[10px] bg-yellow-600 text-black px-1.5 py-0.5 rounded font-bold">Edit</button>
+            </div>
+            <p id="textPengumuman" class="text-xs text-gray-300 italic leading-relaxed">
+                "Selamat datang di aplikasi resmi Cianjur Pharmacy FC."
+            </p>
+        </div>
+
+        <div class="bg-gradient-to-r from-red-950 via-gray-900 to-gray-800 p-3 rounded-lg border border-yellow-500 shadow space-y-2">
+            <div class="flex justify-between items-center border-b border-yellow-500/30 pb-2">
+                <h3 class="text-xs font-black text-yellow-400 tracking-wider flex items-center gap-1">⚽ NEXT MATCHDAY</h3>
+                <div class="flex gap-1">
+                    <button onclick="editJadwalNextMatch()" class="only-admin hidden text-[10px] bg-blue-600 text-white px-2 py-0.5 rounded font-bold hover:bg-blue-500">✏️ Edit</button>
+                    <button onclick="hapusJadwalNextMatch()" class="only-admin hidden text-[10px] bg-red-800 text-white px-2 py-0.5 rounded font-bold hover:bg-red-700">🗑️ Hapus</button>
+                    <button onclick="setTab('banner')" class="text-[10px] bg-yellow-600 text-black px-2 py-0.5 rounded font-bold hover:bg-yellow-500">📝 RSVP</button>
+                </div>
+            </div>
+            <div id="homeNextMatchContent" class="text-xs space-y-2 py-1"></div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+            <div class="bg-yellow-950/60 border border-yellow-500 p-3 rounded-lg text-center">
+                <span class="text-[10px] text-yellow-400 font-bold block uppercase tracking-wide">🏆 Total Kas Klub</span>
+                <span id="homeTotalKas" class="text-lg font-black text-yellow-400 mt-1 block">Rp 0</span>
+            </div>
+            <div class="bg-gray-800 border border-gray-700 p-3 rounded-lg text-center">
+                <span class="text-[10px] text-gray-400 font-bold block uppercase tracking-wide">👥 Total Skuad</span>
+                <span id="homeTotalSkuad" class="text-lg font-black text-white mt-1 block">0 Pemain</span>
+            </div>
+            <div class="bg-gray-800 border border-gray-700 p-3 rounded-lg text-center">
+                <span class="text-[10px] text-gray-400 font-bold block uppercase tracking-wide">⚽ Pertemuan Selesai</span>
+                <span id="homeTotalSesi" class="text-lg font-black text-green-400 mt-1 block">0 Sesi</span>
+            </div>
+            <div class="bg-gray-800 border border-gray-700 p-3 rounded-lg text-center">
+                <span class="text-[10px] text-gray-400 font-bold block uppercase tracking-wide">📸 Total Foto Galeri</span>
+                <span id="homeTotalFoto" class="text-lg font-black text-blue-400 mt-1 block">0 Foto</span>
+            </div>
+        </div>
+
+        <div class="bg-gray-800 p-3 rounded-lg border border-gray-700 space-y-2">
+            <h3 class="text-xs font-bold text-yellow-500">🔥 PEMAIN PALING RAJIN HADIR</h3>
+            <div id="homeTopPlayers" class="grid grid-cols-3 gap-2 pt-1"></div>
+        </div>
+    </div>
+
+    <!-- TAB BANNER & PERENCANAAN PERTANDINGAN -->
+    <div id="tabBanner" class="hidden space-y-4">
+        <div class="only-admin hidden bg-gray-800 p-3 rounded-lg border border-yellow-500 space-y-3">
+            <h3 class="text-xs font-bold text-yellow-500 uppercase tracking-wide">📝 Form Perencanaan Match Next</h3>
+            <div class="space-y-2 text-xs">
+                <div>
+                    <label class="text-gray-400 block mb-1">Nama Tim Lawan:</label>
+                    <input type="text" id="inputLawan" placeholder="Contoh: Garuda FC" class="w-full bg-gray-900 border border-gray-700 rounded p-2 text-white">
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="text-gray-400 block mb-1">Tanggal Pertandingan:</label>
+                        <input type="date" id="inputTglMatch" class="w-full bg-gray-900 border border-gray-700 rounded p-2 text-white">
+                    </div>
+                    <div>
+                        <label class="text-gray-400 block mb-1">Jam Kick-Off:</label>
+                        <input type="text" id="inputJamMatch" placeholder="20.00 WIB" class="w-full bg-gray-900 border border-gray-700 rounded p-2 text-white">
+                    </div>
+                </div>
+                <div>
+                    <label class="text-gray-400 block mb-1">Lokasi / Lapangan:</label>
+                    <input type="text" id="inputLokasiMatch" placeholder="Contoh: Cianjur Mini Soccer Stadium" class="w-full bg-gray-900 border border-gray-700 rounded p-2 text-white">
+                </div>
+                <div>
+                    <label class="text-gray-400 block mb-1">Link URL Situs/Aplikasi Klub (Untuk WA):</label>
+                    <input type="url" id="inputAppUrl" placeholder="https://cpfc-app.web.app" class="w-full bg-gray-900 border border-gray-700 rounded p-2 text-white">
+                </div>
+                <div>
+                    <label class="text-gray-400 block mb-1">Logo Tim Lawan:</label>
+                    <input type="file" id="inputLogoLawan" accept="image/*" class="w-full bg-gray-900 border border-gray-700 rounded p-2 text-white text-xs" onchange="uploadLogoLawan(event)">
+                </div>
+            </div>
+            <button onclick="simpanPerencanaanMatch()" class="w-full bg-yellow-600 hover:bg-yellow-500 text-black font-bold py-2 rounded text-xs shadow">💾 Simpan Jadwal Pertandingan Next</button>
+        </div>
+
+        <div class="bg-gray-800 p-3 rounded-lg border border-yellow-500 space-y-3">
+            <h3 class="text-xs font-bold text-yellow-500 flex justify-between items-center">
+                <span>📋 PENDAFTARAN HADIR MATCH BERIKUTNYA</span>
+                <span id="textTotalRSVP" class="text-[10px] bg-yellow-600 text-black px-2 py-0.5 rounded-full font-bold">0 Siap</span>
+            </h3>
+
+            <div class="bg-gray-900 p-2.5 rounded border border-gray-700 space-y-2">
+                <label class="text-[11px] text-gray-300 block font-semibold">Pilih / Masukkan Nama Pemain:</label>
+                <select id="selectPemainRSVP" class="w-full bg-gray-800 border border-gray-700 rounded p-2 text-xs text-white">
+                    <option value="">-- Pilih Nama Pemain --</option>
+                </select>
+                <div class="grid grid-cols-2 gap-2 pt-1">
+                    <button onclick="submitRSVP(true)" class="bg-green-600 hover:bg-green-500 text-white font-bold py-2 rounded text-xs shadow flex items-center justify-center gap-1">✅ SAYA HADIR</button>
+                    <button onclick="submitRSVP(false)" class="bg-red-800 hover:bg-red-700 text-white font-bold py-2 rounded text-xs shadow flex items-center justify-center gap-1">❌ ABSEN / ABSENT</button>
+                </div>
+            </div>
+
+            <div class="space-y-2 text-xs">
+                <div class="bg-gray-900 p-2 rounded border border-green-800">
+                    <span class="font-bold text-green-400 block mb-1">✅ LIST PEMAIN HADIR (<span id="countHadirNext">0</span>):</span>
+                    <div id="listPemainHadirNext" class="space-y-1 text-gray-200"></div>
+                </div>
+                <div class="bg-gray-900 p-2 rounded border border-red-900">
+                    <span class="font-bold text-red-400 block mb-1">❌ ABSEN / HALANGAN (<span id="countAbsenNext">0</span>):</span>
+                    <div id="listPemainAbsenNext" class="space-y-1 text-gray-400"></div>
+                </div>
+            </div>
+
+            <button onclick="shareWA_NextMatch()" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2.5 rounded-lg text-xs flex items-center justify-center gap-2 shadow">📲 Share List Pertandingan Ke WhatsApp</button>
+        </div>
+
+        <div class="bg-gray-800 p-3 rounded-lg border border-gray-700 space-y-3">
+            <h3 class="text-xs font-bold text-yellow-500">🎨 DESAIN BANNER MATCHDAY</h3>
+            <div id="bannerCard" class="bg-gradient-to-br from-red-950 via-gray-900 to-black p-5 rounded-xl border-2 border-yellow-500 text-center relative overflow-hidden shadow-2xl">
+                <div class="absolute -right-10 -bottom-10 opacity-10 text-yellow-500 text-9xl font-black italic">CPFC</div>
+                <span class="bg-yellow-500 text-black text-[10px] font-black uppercase px-3 py-1 rounded-full tracking-widest inline-block mb-3 shadow">MATCHDAY PREVIEW</span>
+                <div class="flex justify-around items-center my-3 relative z-10">
+                    <div class="flex flex-col items-center w-5/12">
+                        <img id="bannerLogoKita" src="https://via.placeholder.com/80/800000/FFFFFF?text=CPFC" class="w-16 h-16 object-cover rounded-full border-2 border-yellow-500 shadow-lg">
+                        <span class="text-xs font-black text-yellow-400 mt-2 tracking-wide uppercase leading-tight">CIANJUR PHARMACY FC</span>
+                    </div>
+                    <div class="w-2/12 font-black text-2xl text-yellow-500 italic tracking-tighter">VS</div>
+                    <div class="flex flex-col items-center w-5/12">
+                        <img id="bannerLogoLawan" src="https://via.placeholder.com/80/111827/FFFFFF?text=LAWAN" class="w-16 h-16 object-cover rounded-full border-2 border-gray-500 shadow-lg">
+                        <span id="bannerNamaLawan" class="text-xs font-black text-white mt-2 tracking-wide uppercase leading-tight">OPPONENT TEAM</span>
+                    </div>
+                </div>
+                <div class="mt-4 pt-3 border-t border-yellow-500/30 text-xs space-y-1 relative z-10">
+                    <p id="bannerTanggalJam" class="font-bold text-yellow-400 text-sm">🗓️ Sabtu, -- ---- 2026 • --:-- WIB</p>
+                    <p id="bannerLokasi" class="text-gray-300 font-medium">📍 Lapangan Mini Soccer</p>
+                </div>
+            </div>
+            <button onclick="downloadBannerMatch()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-2.5 rounded-lg text-xs flex items-center justify-center gap-1 shadow">📸 Download Gambar Banner Matchday</button>
+        </div>
+    </div>
+
+    <!-- TAB 1: DATA KAS KLUB (SATU SHEET TERPADU: KAS HARIAN, REKAP BULANAN, & RIWAYAT) -->
+    <div id="tabAbsenKas" class="hidden space-y-5">
+        <div class="bg-yellow-950/60 border border-yellow-500 p-3 rounded-lg text-center shadow">
+            <span class="text-[11px] font-bold text-yellow-400 uppercase tracking-wider block mb-1">🏆 TOTAL KAS KLUB (AKUMULASI)</span>
+            <span id="textTotalKasKlub" class="text-2xl font-black text-yellow-400">Rp 0</span>
+        </div>
+
+        <div class="bg-gray-800 p-3 rounded-lg border border-yellow-500/50 space-y-3">
+            <div class="flex items-center justify-between border-b border-gray-700 pb-2">
+                <span class="text-xs font-bold text-yellow-500">📅 KELOLA PERTEMUAN TANGGAL:</span>
+                <input type="date" id="inputTanggal" onchange="render()" class="bg-gray-900 border border-gray-700 rounded p-1.5 text-xs text-white font-bold">
+            </div>
+
+            <div class="grid grid-cols-3 gap-2 text-center text-xs">
+                <div class="bg-gray-900 p-2 rounded border border-green-600">
+                    <span class="text-gray-400 block text-[10px]">Kas Masuk</span>
+                    <span id="textTotalMasuk" class="text-green-400 font-bold text-xs">Rp 0</span>
+                </div>
+                <div class="bg-gray-900 p-2 rounded border border-red-600">
+                    <span class="text-gray-400 block text-[10px]">Kas Keluar</span>
+                    <span id="textTotalKeluar" class="text-red-400 font-bold text-xs">Rp 0</span>
+                </div>
+                <div class="bg-gray-900 p-2 rounded border border-yellow-500">
+                    <span class="text-gray-400 block text-[10px]">Sisa Tanggal Ini</span>
+                    <span id="textSisaKas" class="text-yellow-500 font-bold text-xs">Rp 0</span>
+                </div>
+            </div>
+
+            <div class="only-admin hidden space-y-2 pt-2 border-t border-gray-700">
+                <div class="flex justify-between items-center text-xs">
+                    <span class="font-bold text-yellow-400">☑️ PILIH HADIR (MULTI-SELECT)</span>
+                    <div class="space-x-2 text-[10px]">
+                        <button onclick="togglePilihSemua(true)" class="text-yellow-400 hover:underline">Pilih Semua</button>
+                        <span class="text-gray-600">|</span>
+                        <button onclick="togglePilihSemua(false)" class="text-gray-400 hover:underline">Batal</button>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="text-[11px] text-gray-300">Set Kas Default:</span>
+                    <input type="number" id="inputBayarKasMulti" value="20000" class="w-28 bg-gray-900 border border-gray-700 rounded p-1 text-xs text-white text-right font-bold">
+                    <span class="text-[11px] text-gray-400">Rp</span>
+                </div>
+                <div id="containerMultiSelect" class="max-h-40 overflow-y-auto bg-gray-900 p-2 rounded border border-gray-700 space-y-1"></div>
+                <button onclick="tambahKehadiranMulti()" class="w-full bg-yellow-600 hover:bg-yellow-500 text-black font-bold py-2 rounded text-xs shadow">+ Masukkan Pemain Terpilih Ke Daftar Hadir</button>
+            </div>
+
+            <div class="only-admin hidden space-y-2 pt-2 border-t border-gray-700">
+                <h4 class="text-xs font-bold text-red-400">PENGELUARAN (KAS KELUAR)</h4>
+                <div class="flex gap-2">
+                    <input type="text" id="inputDescKeluar" placeholder="Ket (Misal: Sewa Lapangan)" class="flex-1 bg-gray-900 border border-gray-700 rounded p-2 text-xs text-white">
+                    <input type="number" id="inputAmountKeluar" placeholder="Rp Nominal" class="w-28 bg-gray-900 border border-gray-700 rounded p-2 text-xs text-white">
+                </div>
+                <button onclick="tambahPengeluaran()" class="w-full bg-red-800 hover:bg-red-700 text-white font-bold py-1.5 rounded text-xs">+ Catat Pengeluaran</button>
+            </div>
+
+            <div id="containerPengeluaran" class="space-y-1"></div>
+
+            <div class="bg-gray-900 rounded-lg p-2.5 border border-gray-700 space-y-2">
+                <div class="flex justify-between items-center">
+                    <h4 class="text-xs font-bold text-yellow-500">DAFTAR HADIR TANGGAL INI</h4>
+                    <span id="textTotalHadir" class="text-[10px] text-gray-300 font-semibold">Hadir: 0 Orang</span>
+                </div>
+                <div id="listAbsen" class="space-y-1.5"></div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-2 pt-1">
+                <button onclick="downloadGambarHadir()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 rounded text-xs flex items-center justify-center gap-1">📸 Gambar Hadir</button>
+                <button onclick="downloadGambarKas()" class="bg-amber-600 hover:bg-amber-700 text-white font-bold py-2 rounded text-xs flex items-center justify-center gap-1">📸 Gambar Kas</button>
+            </div>
+            <button onclick="shareWA()" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2.5 rounded text-xs shadow flex items-center justify-center gap-1">📲 Share Laporan Teks ke WhatsApp</button>
+        </div>
+
+        <div class="bg-gray-800 p-3 rounded-lg border border-gray-700 space-y-3">
+            <div class="flex justify-between items-center border-b border-gray-700 pb-2">
+                <h3 class="text-xs font-bold text-yellow-500">📊 REKAP BULANAN GLOBAL</h3>
+                <button onclick="downloadGambarBulanan()" class="bg-amber-600 hover:bg-amber-700 text-white text-[10px] font-bold px-2 py-1 rounded">📸 Gambar Bulanan</button>
+            </div>
+            <div id="containerRekapBulanan" class="space-y-2"></div>
+        </div>
+
+        <div class="bg-gray-800 p-3 rounded-lg border border-gray-700 space-y-2">
+            <h3 class="text-xs font-bold text-yellow-500">📁 DAFTAR RIWAYAT SEMUA PERTEMUAN</h3>
+            <div id="listRiwayat" class="space-y-2"></div>
+        </div>
+    </div>
+
+    <!-- TAB 4: PEMAIN (LATAR PROFIL) -->
+    <div id="tabGaleriPemain" class="hidden space-y-4">
+        <div class="bg-gray-800 p-3 rounded-lg border border-yellow-500/50">
+            <h3 class="text-xs font-bold text-yellow-500 mb-1">⚽ PROFIL & LATAR PEMAIN SQUAD</h3>
+            <p class="text-[10px] text-gray-400 mb-3 italic">Klik kartu pemain untuk membuka profil lengkap dan album foto pribadi mereka.</p>
+            <div id="containerGridPemain" class="grid grid-cols-2 gap-3 mt-3"></div>
+        </div>
+    </div>
+
+    <!-- TAB 5: GALERI KLUB & JERSEY -->
+    <div id="tabGaleriKlub" class="hidden space-y-4">
+        <div class="only-admin hidden bg-gray-800 p-3 rounded-lg border border-yellow-500/50 space-y-2">
+            <h3 class="text-xs font-bold text-yellow-500">📷 UPLOAD FOTO KE GALERI KLUB / JERSEY</h3>
+            <div class="space-y-2 text-xs">
+                <div>
+                    <label class="text-gray-400 block mb-1">Pilih Kategori Galeri:</label>
+                    <select id="inputKategoriGaleri" class="w-full bg-gray-900 border border-gray-700 rounded p-2 text-white">
+                        <option value="jersey">👕 Model Jersey & Official Merchandise</option>
+                        <option value="match">⚽ Dokumentasi Match / Pertandingan</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="text-gray-400 block mb-1">Sub-Judul / Keterangan Album:</label>
+                    <input type="text" id="inputSubJudulGaleri" placeholder="Contoh: Jersey Home Utama 2026 / Laga vs Spartan FC" class="w-full bg-gray-900 border border-gray-700 rounded p-2 text-white">
+                </div>
+                <div>
+                    <label class="text-gray-400 block mb-1">File Foto:</label>
+                    <input type="file" id="inputFileGaleriBaru" accept="image/*" multiple class="bg-gray-900 border border-gray-700 text-xs text-white rounded w-full p-2">
+                </div>
+            </div>
+            <button onclick="simpanGaleriKlubBaru(event)" class="w-full bg-yellow-600 hover:bg-yellow-500 text-black font-bold py-2 rounded text-xs">+ Unggah ke Galeri</button>
+        </div>
+
+        <div class="bg-gray-800 p-3 rounded-lg border border-gray-700 space-y-3">
+            <h3 class="text-xs font-bold text-yellow-500 border-b border-gray-700 pb-1">👕 GALERI MODEL JERSEY & MERCHANDISE</h3>
+            <div id="containerGaleriJersey" class="space-y-4"></div>
+        </div>
+
+        <div class="bg-gray-800 p-3 rounded-lg border border-gray-700 space-y-3">
+            <h3 class="text-xs font-bold text-yellow-500 border-b border-gray-700 pb-1">⚽ GALERI DOKUMENTASI MATCH</h3>
+            <div id="containerGaleriMatch" class="space-y-4"></div>
+        </div>
+    </div>
+
+    <!-- TAB 3: DAFTAR ANGGOTA -->
+    <div id="tabAnggota" class="hidden space-y-4">
+        <div class="only-admin hidden bg-gray-800 p-3 rounded-lg border border-yellow-600/50 space-y-2">
+            <h3 class="text-xs font-bold text-yellow-500">📋 COPAS DARI EXCEL</h3>
+            <textarea id="inputCopas" rows="3" placeholder="Paste data dari Excel di sini..." class="w-full bg-gray-900 border border-gray-700 rounded p-2 text-xs text-white"></textarea>
+            <button onclick="prosesCopasMassal()" class="w-full bg-yellow-600 hover:bg-yellow-500 text-black font-bold py-2 rounded text-xs">📥 Impor Anggota</button>
+        </div>
+
+        <div class="only-admin hidden bg-gray-800 p-3 rounded-lg border border-gray-700 space-y-3">
+            <h3 class="text-xs font-bold text-gray-300">TAMBAH ANGGOTA BARU</h3>
+            <div class="flex gap-2">
+                <input type="text" id="inputNoPunggung" placeholder="No" class="w-16 bg-gray-900 border border-gray-700 rounded p-2 text-xs text-white text-center">
+                <input type="text" id="inputNama" placeholder="Nama Lengkap" class="flex-1 bg-gray-900 border border-gray-700 rounded p-2 text-xs text-white">
+            </div>
+            <div class="flex gap-2">
+                <input type="text" id="inputNickname" placeholder="Nickname / Panggilan" class="w-1/2 bg-gray-900 border border-gray-700 rounded p-2 text-xs text-white">
+                <input type="text" id="inputBio" placeholder="Biografi Singkat" class="w-1/2 bg-gray-900 border border-gray-700 rounded p-2 text-xs text-white">
+            </div>
+            <button onclick="tambahPemain()" class="w-full bg-yellow-600 hover:bg-yellow-500 text-black font-bold py-2 rounded text-xs shadow">+ Tambah Anggota Baru</button>
+        </div>
+
+        <div class="bg-gray-800 rounded-lg p-2">
+            <div class="flex justify-between items-center px-2 mb-2">
+                <h3 class="text-xs font-bold text-yellow-500">DAFTAR ANGGOTA TERDAFTAR</h3>
+                <span id="totalAnggota" class="text-xs bg-yellow-600 text-black px-2 py-0.5 rounded-full font-bold">Total: 0</span>
+            </div>
+            <div id="listPemain" class="space-y-2"></div>
+        </div>
+    </div>
+
+    <!-- MODAL DETAIL / BIOGRAFI & LATAR PROFIL PEMAIN -->
+    <div id="modalBio" class="fixed inset-0 bg-black/80 z-50 hidden flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-gray-900 border-2 border-yellow-500 rounded-xl max-w-sm w-full p-4 relative space-y-3 shadow-2xl my-auto">
+            <button onclick="tutupModalBio()" class="absolute top-2 right-2 text-gray-400 hover:text-white bg-gray-800 w-7 h-7 rounded-full flex items-center justify-center font-bold text-xs">✕</button>
+            <div class="relative inline-block mt-2 text-center w-full">
+                <img id="modalFoto" src="" class="w-24 h-24 object-cover rounded-full border-2 border-yellow-500 shadow-lg mx-auto player-img-click" title="Foto Profil Utama">
+                <span id="modalNoPunggung" class="absolute bottom-0 right-14 bg-yellow-500 text-black text-[10px] font-black px-2 py-0.5 rounded-full shadow">#</span>
+            </div>
+            <div class="text-center">
+                <h3 id="modalNama" class="text-base font-black text-white"></h3>
+                <p id="modalNickname" class="text-xs font-bold text-yellow-400"></p>
+            </div>
+            <div class="only-admin hidden text-center">
+                <label for="inputUbahFotoProfil" class="bg-yellow-600 hover:bg-yellow-500 text-black font-bold px-3 py-1 rounded text-[10px] cursor-pointer inline-block shadow">📷 Ubah Foto Profil Utama</label>
+                <input type="file" id="inputUbahFotoProfil" accept="image/*" class="hidden" onchange="uploadFotoProfilUtama(event)">
+            </div>
+            <div class="bg-gray-800 p-3 rounded-lg border border-gray-700 text-left space-y-1 text-xs">
+                <p class="text-gray-400 font-bold uppercase text-[10px]">Biografi & Profil Pemain:</p>
+                <p id="modalBioText" class="text-gray-200 italic leading-relaxed"></p>
+                <p id="modalKehadiran" class="text-yellow-400 font-bold pt-1 border-t border-gray-700"></p>
+            </div>
+
+            <div class="bg-gray-800 p-3 rounded-lg border border-gray-700 space-y-2 text-left text-xs">
+                <div class="flex justify-between items-center">
+                    <span class="text-yellow-500 font-bold uppercase text-[10px]">🖼️ Latar & Foto Lainnya:</span>
+                    <label id="labelUploadFotoLain" class="only-admin hidden bg-yellow-600 hover:bg-yellow-500 text-black px-2 py-0.5 rounded text-[10px] font-bold cursor-pointer">+ Tambah Foto</label>
+                    <input type="file" id="inputFotoLainPemain" accept="image/*" multiple class="hidden" onchange="uploadFotoLainPemain(event)">
+                </div>
+                <div id="modalContainerFotoLain" class="grid grid-cols-3 gap-2 pt-1 max-h-32 overflow-y-auto"></div>
+            </div>
+
+            <button onclick="tutupModalBio()" class="w-full bg-yellow-600 hover:bg-yellow-500 text-black font-bold py-2 rounded text-xs">Tutup</button>
+        </div>
+    </div>
+
+    <!-- MODAL POPUP KOMENTAR FOTO GALERI -->
+    <div id="modalKomentar" class="fixed inset-0 bg-black/85 z-50 hidden flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-gray-900 border-2 border-yellow-500 rounded-xl max-w-sm w-full p-4 relative space-y-3 shadow-2xl my-auto">
+            <button onclick="tutupModalKomentar()" class="absolute top-2 right-2 text-gray-400 hover:text-white bg-gray-800 w-7 h-7 rounded-full flex items-center justify-center font-bold text-xs">✕</button>
+            <h3 class="text-xs font-bold text-yellow-500 text-center uppercase tracking-wide">💬 Komentar Foto Galeri</h3>
+            <div class="text-center">
+                <img id="previewKomentarImg" src="" class="w-full h-48 object-cover rounded-lg border border-gray-700 shadow">
+            </div>
+            <div class="bg-gray-800 p-2.5 rounded-lg border border-gray-700 max-h-40 overflow-y-auto space-y-2 text-xs" id="listKomentarContainer"></div>
+            <div class="space-y-2 pt-1 text-xs">
+                <input type="text" id="inputNamaPengirim" placeholder="Nama Anda / Pengunjung" class="w-full bg-gray-800 border border-gray-700 rounded p-2 text-white">
+                <textarea id="inputIsiKomentar" rows="2" placeholder="Tulis komentar Anda di sini..." class="w-full bg-gray-800 border border-gray-700 rounded p-2 text-white"></textarea>
+                <button onclick="kirimKomentar()" class="w-full bg-green-600 hover:bg-green-500 text-white font-bold py-2 rounded shadow">Kirim Komentar 🚀</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ELEMEN RENDER OFF-SCREEN HTML2CANVAS -->
+    <div id="renderHadir" class="fixed top-0 left-0 -z-50 opacity-0 pointer-events-none w-[450px] bg-gray-900 text-white p-6 border-2 border-yellow-500 font-sans block">
+        <div class="flex items-center justify-center gap-3 mb-2 border-b border-yellow-500 pb-3">
+            <img id="cardLogoHadir" src="" class="w-12 h-12 object-cover rounded-full border border-yellow-500">
+            <div class="text-left">
+                <h2 class="text-xl font-black text-yellow-500 tracking-wide leading-none">CIANJUR PHARMACY FC</h2>
+                <p id="cardTanggalHadir" class="text-xs text-gray-300 font-bold mt-1">DAFTAR HADIR PERTEMUAN</p>
+            </div>
+        </div>
+        <div id="timestampHadir" class="text-[10px] text-gray-400 text-center mb-3"></div>
+        <div id="cardListHadir" class="space-y-2 text-sm"></div>
+        <div class="mt-6 pt-3 border-t border-gray-700 text-center text-[10px] text-gray-400">CPFC Mini Soccer Club • Est 2026</div>
+    </div>
+
+    <div id="renderKas" class="fixed top-0 left-0 -z-50 opacity-0 pointer-events-none w-[450px] bg-gray-900 text-white p-6 border-2 border-yellow-500 font-sans block">
+        <div class="flex items-center justify-center gap-3 mb-2 border-b border-yellow-500 pb-3">
+            <img id="cardLogoKas" src="" class="w-12 h-12 object-cover rounded-full border border-yellow-500">
+            <div class="text-left">
+                <h2 class="text-xl font-black text-yellow-500 tracking-wide leading-none">CIANJUR PHARMACY FC</h2>
+                <p id="cardTanggalKas" class="text-xs text-gray-300 font-bold mt-1">LAPORAN KAS PERTEMUAN</p>
+            </div>
+        </div>
+        <div id="timestampKas" class="text-[10px] text-gray-400 text-center mb-3"></div>
+        <div class="space-y-3 text-xs">
+            <div class="bg-gray-800 p-3 rounded border border-gray-700 flex justify-between items-center">
+                <span class="font-bold text-gray-300">Total Kas Masuk Pertemuan:</span>
+                <span id="cardKasMasuk" class="text-green-400 font-bold text-sm">Rp 0</span>
+            </div>
+            <div class="bg-gray-800 p-3 rounded border border-gray-700 space-y-1">
+                <div class="font-bold text-red-400 border-b border-gray-700 pb-1 mb-1">Rincian Pengeluaran:</div>
+                <div id="cardListPengeluaran" class="space-y-1"></div>
+            </div>
+            <div class="bg-gray-800 p-3 rounded border border-yellow-600 flex justify-between items-center">
+                <span class="font-bold text-yellow-500 text-xs">Sisa Kas Pertemuan Ini:</span>
+                <span id="cardKasSisaPertemuan" class="text-yellow-400 font-bold text-sm">Rp 0</span>
+            </div>
+            <div class="bg-yellow-950 p-3 rounded border-2 border-yellow-500 flex justify-between items-center">
+                <span class="font-black text-yellow-400 text-xs uppercase">TOTAL KAS KLUB (AKUMULASI):</span>
+                <span id="cardKasAkhirAkumulasi" class="text-yellow-400 font-black text-base">Rp 0</span>
+            </div>
+        </div>
+        <div class="mt-6 pt-3 border-t border-gray-700 text-center text-[10px] text-gray-400">CPFC Mini Soccer Club • Est 2026</div>
+    </div>
+
+    <div id="renderBulanan" class="fixed top-0 left-0 -z-50 opacity-0 pointer-events-none w-[450px] bg-gray-900 text-white p-6 border-2 border-yellow-500 font-sans block">
+        <div class="flex items-center justify-center gap-3 mb-2 border-b border-yellow-500 pb-3">
+            <img id="cardLogoBulanan" src="" class="w-12 h-12 object-cover rounded-full border border-yellow-500">
+            <div class="text-left">
+                <h2 class="text-xl font-black text-yellow-500 tracking-wide leading-none">CIANJUR PHARMACY FC</h2>
+                <p class="text-xs text-gray-300 font-bold mt-1">LAPORAN REKAP BULANAN GLOBAL</p>
+            </div>
+        </div>
+        <div id="timestampBulanan" class="text-[10px] text-gray-400 text-center mb-3"></div>
+        <div id="cardListBulanan" class="space-y-3 text-xs"></div>
+        <div class="bg-yellow-950 p-3 rounded border-2 border-yellow-500 flex justify-between items-center mt-4">
+            <span class="font-black text-yellow-400 text-xs uppercase">TOTAL SALDO AKUMULASI KLUB:</span>
+            <span id="cardBulananTotalAkumulasi" class="text-yellow-400 font-black text-base">Rp 0</span>
+        </div>
+        <div class="mt-6 pt-3 border-t border-gray-700 text-center text-[10px] text-gray-400">CPFC Mini Soccer Club • Est 2026</div>
+    </div>
+
+    <script>
+        let isAdmin = false;
+        const ADMIN_PASSWORD = "admin123";
+        let currentSelectedPlayerName = null;
+        let activeKomentarFotoUrl = null;
+
+        function toggleAdminMode() {
+            if (isAdmin) {
+                isAdmin = false;
+                applyAdminMode();
+                alert("Anda telah keluar dari Mode Admin.");
+            } else {
+                const inputPass = prompt("Masukkan Password Admin:");
+                if (inputPass === ADMIN_PASSWORD) {
+                    isAdmin = true;
+                    applyAdminMode();
+                    alert("Akses Admin Diterima!");
+                } else if (inputPass !== null) {
+                    alert("Password Salah!");
+                }
+            }
+        }
+
+        function applyAdminMode() {
+            const adminElements = document.querySelectorAll('.only-admin');
+            const statusText = document.getElementById('textStatusMode');
+            const btnAdmin = document.getElementById('btnToggleAdmin');
+
+            if (isAdmin) {
+                adminElements.forEach(el => el.classList.remove('hidden'));
+                statusText.innerHTML = `⚙ Mode: <strong class="text-yellow-400">Admin (Bisa Edit)</strong>`;
+                btnAdmin.innerText = "🔒 Keluar Admin";
+                btnAdmin.className = "bg-red-800 hover:bg-red-700 text-white font-bold px-2 py-1 rounded text-[10px]";
+            } else {
+                adminElements.forEach(el => el.classList.add('hidden'));
+                statusText.innerHTML = `👁️ Mode: <strong class="text-blue-400">Hanya Lihat (Pengunjung)</strong>`;
+                btnAdmin.innerText = "🔓 Login Admin";
+                btnAdmin.className = "bg-yellow-600 hover:bg-yellow-500 text-black font-bold px-2 py-1 rounded text-[10px]";
+            }
+            render();
+            renderRiwayat();
+        }
+
+        function updateLiveClock() {
+            const now = new Date();
+            const optionsDate = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', timeZone: 'Asia/Jakarta' };
+            const formattedDate = now.toLocaleDateString('id-ID', optionsDate);
+            
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+
+            document.getElementById('liveDate').innerText = formattedDate;
+            document.getElementById('liveTime').innerText = `${hours}:${minutes}:${seconds} WIB`;
+        }
+
+        setInterval(updateLiveClock, 1000);
+        updateLiveClock();
+
+        function getFormattedTimestamp() {
+            const now = new Date();
+            return `Diunduh pada: ${now.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })} pukul ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')} WIB`;
+        }
+
+        const todayDate = new Date();
+        const year = todayDate.getFullYear();
+        const month = String(todayDate.getMonth() + 1).padStart(2, '0');
+        const day = String(todayDate.getDate()).padStart(2, '0');
+        document.getElementById('inputTanggal').value = `${year}-${month}-${day}`;
+
+        const defaultAnggota = [
+            { noPunggung: "0,5", nama: "Opik", nickname: "Opik", bio: "Pemain andalan lini tengah dengan visi bermain yang tajam.", foto: "", fotoLain: [] },
+            { noPunggung: "7", nama: "Raffi", nickname: "Raffi", bio: "Winger cepat penggedor pertahanan lawan.", foto: "", fotoLain: [] },
+            { noPunggung: "85", nama: "Gatot", nickname: "Gatot", bio: "Tembok pertahanan yang kokoh dan disiplin.", foto: "", fotoLain: [] },
+            { noPunggung: "9", nama: "Warson", nickname: "Warson", bio: "Striker haus gol dengan akurasi tembakan tinggi.", foto: "", fotoLain: [] },
+            { noPunggung: "28", nama: "Marvin", nickname: "Marvin", bio: "Gelandang kreatif pengatur tempo permainan.", foto: "", fotoLain: [] },
+            { noPunggung: "8", nama: "Rully", nickname: "Rully", bio: "Pemain serba bisa di berbagai posisi lapangan.", foto: "", fotoLain: [] },
+            { noPunggung: "4", nama: "Aldy", nickname: "Aldy", bio: "Bek tangguh yang tak kenal kompromi.", foto: "", fotoLain: [] },
+            { noPunggung: "13", nama: "pa Eko", nickname: "Pa Eko", bio: "Senior inspiratif dengan pengalaman bermain yang matang.", foto: "", fotoLain: [] },
+            { noPunggung: "15", nama: "Rizal", nickname: "Rizal", bio: "Pemain lincah dengan stamina luar biasa.", foto: "", fotoLain: [] },
+            { noPunggung: "27", nama: "Tyar", nickname: "Tyar", bio: "Eksekutor bola mati yang mematikan.", foto: "", fotoLain: [] },
+            { noPunggung: "76", nama: "Vman", nickname: "Vman", bio: "Sayap cepat pengantar umpan matang ke kotak penalti.", foto: "", fotoLain: [] },
+            { noPunggung: "0,3", nama: "aril", nickname: "Aril", bio: "Talenta muda berbakat penuh energi.", foto: "", fotoLain: [] },
+            { noPunggung: "23", nama: "Andi", nickname: "Andi", bio: "Pemain bertahan yang lugas dan tenang.", foto: "", fotoLain: [] },
+            { noPunggung: "18", nama: "Arya", nickname: "Arya", bio: "Gelandang petarung pemutus serangan lawan.", foto: "", fotoLain: [] },
+            { noPunggung: "16", nama: "Iksan", nickname: "Iksan", bio: "Penyerang sayap dengan dribble memukau.", foto: "", fotoLain: [] },
+            { noPunggung: "53", nama: "Ipong", nickname: "Ipong", bio: "Pemain energik yang selalu siap bekerja keras.", foto: "", fotoLain: [] },
+            { noPunggung: "39", nama: "Sendy", nickname: "Sendy", bio: "Pengatur lini tengah yang cerdas.", foto: "", fotoLain: [] },
+            { noPunggung: "10", nama: "Aman", nickname: "Aman", bio: "Playmaker utama tim dengan umpan-umpan akurat.", foto: "", fotoLain: [] },
+            { noPunggung: "11", nama: "Iki", nickname: "Iki", bio: "Pemain sayap eksplosif.", foto: "", fotoLain: [] },
+            { noPunggung: "12", nama: "Ian", nickname: "Ian", bio: "Penjaga gawang tangguh penyelamat gawang.", foto: "", fotoLain: [] },
+            { noPunggung: "41", nama: "King", nickname: "King", bio: "Sosok pemimpin di dalam lapangan hijau.", foto: "", fotoLain: [] },
+            { noPunggung: "92", nama: "Imron", nickname: "Imron", bio: "Bek tengah yang tangguh dalam duel udara.", foto: "", fotoLain: [] },
+            { noPunggung: "17", nama: "Dexa", nickname: "Dexa", bio: "Gelandang box-to-box tanpa kenal lelah.", foto: "", fotoLain: [] },
+            { noPunggung: "33", nama: "Pahad", nickname: "Pahad", bio: "Pemain pekerja keras di lini depan.", foto: "", fotoLain: [] },
+            { noPunggung: "", nama: "pa asep", nickname: "Pa Asep", bio: "Tokoh senior panutan seluruh skuad klub.", foto: "", fotoLain: [] },
+            { noPunggung: "2", nama: "Daniel", nickname: "Daniel", bio: "Fullback modern yang aktif membantu serangan.", foto: "", fotoLain: [] },
+            { noPunggung: "22", nama: "widi", nickname: "Widi", bio: "Pemain serba bisa beretos kerja tinggi.", foto: "", fotoLain: [] },
+            { noPunggung: "98", nama: "agung", nickname: "Agung", bio: "Penyerang tajam penentu kemenangan tim.", foto: "", fotoLain: [] },
+            { noPunggung: "29", nama: "Dimas", nickname: "Dimas", bio: "Gelandang bertahan pemotong alur serangan musuh.", foto: "", fotoLain: [] },
+            { noPunggung: "77", nama: "pa Hari", nickname: "Pa Hari", bio: "Pembimbing sekaligus pemain berkarisma tinggi.", foto: "", fotoLain: [] },
+            { noPunggung: "21", nama: "izal", nickname: "Izal", bio: "Pemain lincah pembongkar pertahanan rapat.", foto: "", fotoLain: [] },
+            { noPunggung: "89", nama: "Wandi", nickname: "Wandi", bio: "Pilar lini belakang yang solid.", foto: "", fotoLain: [] }
+        ];
+
+        let dataPemain = JSON.parse(localStorage.getItem('cp_pemain_simple')) || defaultAnggota;
+        dataPemain = dataPemain.map(p => ({
+            ...p,
+            nickname: p.nickname || p.nama,
+            bio: p.bio || "Pemain resmi Cianjur Pharmacy FC.",
+            fotoLain: p.fotoLain || []
+        }));
+
+        let dataPertemuan = JSON.parse(localStorage.getItem('cp_pertemuan_simple')) || {};
+        let dataGaleriKlub = JSON.parse(localStorage.getItem('cp_galeri_klub')) || { match: [], jersey: [] };
+        let dataKomentarGaleri = JSON.parse(localStorage.getItem('cp_komentar_galeri')) || {};
+        
+        let textPengumumanData = localStorage.getItem('cp_pengumuman_simple') || "Selamat datang di aplikasi resmi Cianjur Pharmacy FC.";
+        let nextMatchData = JSON.parse(localStorage.getItem('cp_next_match')) || {
+            lawan: "Spartan FC",
+            tanggal: `${year}-${month}-${day}`,
+            jam: "20:00 WIB",
+            lokasi: "Cianjur Mini Soccer",
+            appUrl: window.location.href,
+            logoLawan: "https://via.placeholder.com/80/111827/FFFFFF?text=LAWAN",
+            rsvpHadir: [],
+            rsvpAbsen: []
+        };
+
+        if(!nextMatchData.rsvpHadir) nextMatchData.rsvpHadir = [];
+        if(!nextMatchData.rsvpAbsen) nextMatchData.rsvpAbsen = [];
+        if(!nextMatchData.appUrl) nextMatchData.appUrl = window.location.href;
+
+        let savedLogo = localStorage.getItem('cp_logo_simple') || 'https://via.placeholder.com/80/800000/FFFFFF?text=CPFC';
+        document.getElementById('imgLogo').src = savedLogo;
+        document.getElementById('bannerLogoKita').src = savedLogo;
+        document.getElementById('textPengumuman').innerText = `"${textPengumumanData}"`;
+
+        function simpanData(refreshAnggotaUI = true) {
+            localStorage.setItem('cp_pemain_simple', JSON.stringify(dataPemain));
+            localStorage.setItem('cp_pertemuan_simple', JSON.stringify(dataPertemuan));
+            localStorage.setItem('cp_galeri_klub', JSON.stringify(dataGaleriKlub));
+            localStorage.setItem('cp_komentar_galeri', JSON.stringify(dataKomentarGaleri));
+            localStorage.setItem('cp_pengumuman_simple', textPengumumanData);
+            localStorage.setItem('cp_next_match', JSON.stringify(nextMatchData));
+            render(refreshAnggotaUI);
+            renderRiwayat();
+            renderNextMatch();
+        }
+
+        function editPengumuman() {
+            if (!isAdmin) return;
+            const textBaru = prompt("Masukkan Pengumuman / Pesan Klub Terbaru:", textPengumumanData);
+            if (textBaru !== null && textBaru.trim() !== '') {
+                textPengumumanData = textBaru.trim();
+                document.getElementById('textPengumuman').innerText = `"${textPengumumanData}"`;
+                simpanData(false);
+            }
+        }
+
+        function uploadLogo(event) {
+            if (!isAdmin) return;
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const result = e.target.result;
+                    document.getElementById('imgLogo').src = result;
+                    document.getElementById('bannerLogoKita').src = result;
+                    localStorage.setItem('cp_logo_simple', result);
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function uploadLogoLawan(event) {
+            if (!isAdmin) return;
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    nextMatchData.logoLawan = e.target.result;
+                    document.getElementById('bannerLogoLawan').src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function setTab(tab) {
+            document.getElementById('tabBeranda').classList.add('hidden');
+            document.getElementById('tabBanner').classList.add('hidden');
+            document.getElementById('tabAbsenKas').classList.add('hidden');
+            document.getElementById('tabAnggota').classList.add('hidden');
+            document.getElementById('tabGaleriPemain').classList.add('hidden');
+            document.getElementById('tabGaleriKlub').classList.add('hidden');
+
+            document.getElementById('btnTab0').className = "flex-1 py-2 text-gray-400 whitespace-nowrap px-2";
+            document.getElementById('btnTabBanner').className = "flex-1 py-2 text-gray-400 whitespace-nowrap px-2";
+            document.getElementById('btnTab1').className = "flex-1 py-2 text-gray-400 whitespace-nowrap px-2";
+            document.getElementById('btnTab3').className = "flex-1 py-2 text-gray-400 whitespace-nowrap px-2";
+            document.getElementById('btnTab4').className = "flex-1 py-2 text-gray-400 whitespace-nowrap px-2";
+            document.getElementById('btnTab5').className = "flex-1 py-2 text-gray-400 whitespace-nowrap px-2";
+
+            if (tab === 'beranda') {
+                document.getElementById('tabBeranda').classList.remove('hidden');
+                document.getElementById('btnTab0').className = "flex-1 py-2 text-yellow-500 border-b-2 border-yellow-500 whitespace-nowrap px-2";
+                renderBeranda();
+            } else if (tab === 'banner') {
+                document.getElementById('tabBanner').classList.remove('hidden');
+                document.getElementById('btnTabBanner').className = "flex-1 py-2 text-yellow-500 border-b-2 border-yellow-500 whitespace-nowrap px-2";
+                loadFormNextMatch();
+            } else if (tab === 'absenKas') {
+                document.getElementById('tabAbsenKas').classList.remove('hidden');
+                document.getElementById('btnTab1').className = "flex-1 py-2 text-yellow-500 border-b-2 border-yellow-500 whitespace-nowrap px-2";
+                render();
+            } else if (tab === 'galeriPemain') {
+                document.getElementById('tabGaleriPemain').classList.remove('hidden');
+                document.getElementById('btnTab4').className = "flex-1 py-2 text-yellow-500 border-b-2 border-yellow-500 whitespace-nowrap px-2";
+                renderGaleriPemain();
+            } else if (tab === 'galeriKlub') {
+                document.getElementById('tabGaleriKlub').classList.remove('hidden');
+                document.getElementById('btnTab5').className = "flex-1 py-2 text-yellow-500 border-b-2 border-yellow-500 whitespace-nowrap px-2";
+                renderGaleriKlub();
+            } else if (tab === 'anggota') {
+                document.getElementById('tabAnggota').classList.remove('hidden');
+                document.getElementById('btnTab3').className = "flex-1 py-2 text-yellow-500 border-b-2 border-yellow-500 whitespace-nowrap px-2";
+            }
+        }
+
+        function simpanPerencanaanMatch() {
+            if (!isAdmin) return;
+            nextMatchData.lawan = document.getElementById('inputLawan').value.trim() || "OPPONENT TEAM";
+            nextMatchData.tanggal = document.getElementById('inputTglMatch').value || `${year}-${month}-${day}`;
+            nextMatchData.jam = document.getElementById('inputJamMatch').value.trim() || "20:00 WIB";
+            nextMatchData.lokasi = document.getElementById('inputLokasiMatch').value.trim() || "Lap. Mini Soccer";
+            nextMatchData.appUrl = document.getElementById('inputAppUrl').value.trim() || window.location.href;
+            
+            simpanData(false);
+            alert('Perencanaan Pertandingan & Banner Berhasil Disimpan!');
+        }
+
+        function editJadwalNextMatch() {
+            if (!isAdmin) return;
+            setTab('banner');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function hapusJadwalNextMatch() {
+            if (!isAdmin) return;
+            if (confirm("Apakah Anda yakin ingin menghapus jadwal pertandingan berikutnya?")) {
+                nextMatchData = {
+                    lawan: "-", tanggal: "", jam: "-", lokasi: "-",
+                    appUrl: window.location.href,
+                    logoLawan: "https://via.placeholder.com/80/111827/FFFFFF?text=LAWAN",
+                    rsvpHadir: [], rsvpAbsen: []
+                };
+                simpanData(false);
+                alert("Jadwal pertandingan berhasil dihapus.");
+            }
+        }
+
+        function loadFormNextMatch() {
+            document.getElementById('inputLawan').value = nextMatchData.lawan !== "-" ? nextMatchData.lawan : '';
+            document.getElementById('inputTglMatch').value = nextMatchData.tanggal || '';
+            document.getElementById('inputJamMatch').value = nextMatchData.jam !== "-" ? nextMatchData.jam : '';
+            document.getElementById('inputLokasiMatch').value = nextMatchData.lokasi !== "-" ? nextMatchData.lokasi : '';
+            document.getElementById('inputAppUrl').value = nextMatchData.appUrl || window.location.href;
+            renderNextMatch();
+        }
+
+        function submitRSVP(isHadir) {
+            const select = document.getElementById('selectPemainRSVP');
+            const namaPemain = select.value;
+            if (!namaPemain) {
+                alert('Silakan pilih nama Anda terlebih dahulu!');
+                return;
+            }
+
+            nextMatchData.rsvpHadir = nextMatchData.rsvpHadir.filter(n => n !== namaPemain);
+            nextMatchData.rsvpAbsen = nextMatchData.rsvpAbsen.filter(n => n !== namaPemain);
+
+            if (isHadir) {
+                nextMatchData.rsvpHadir.push(namaPemain);
+            } else {
+                nextMatchData.rsvpAbsen.push(namaPemain);
+            }
+
+            select.value = '';
+            simpanData(false);
+            alert(`Status kehadiran ${namaPemain} telah dicatat!`);
+        }
+
+        function hapusRSVP(namaPemain) {
+            nextMatchData.rsvpHadir = nextMatchData.rsvpHadir.filter(n => n !== namaPemain);
+            nextMatchData.rsvpAbsen = nextMatchData.rsvpAbsen.filter(n => n !== namaPemain);
+            simpanData(false);
+        }
+
+        function renderNextMatch() {
+            const formattedTgl = nextMatchData.tanggal ? new Date(nextMatchData.tanggal).toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }) : '-';
+
+            const containerHome = document.getElementById('homeNextMatchContent');
+            containerHome.innerHTML = `
+                <div class="flex justify-between items-center bg-gray-900/80 p-2 rounded border border-gray-700">
+                    <div class="flex items-center gap-2">
+                        <img src="${savedLogo}" class="w-8 h-8 rounded-full border border-yellow-500">
+                        <span class="font-bold text-yellow-400">CPFC</span>
+                    </div>
+                    <span class="font-black text-yellow-500 text-sm">VS</span>
+                    <div class="flex items-center gap-2">
+                        <span class="font-bold text-white">${nextMatchData.lawan}</span>
+                        <img src="${nextMatchData.logoLawan}" class="w-8 h-8 rounded-full border border-gray-600">
+                    </div>
+                </div>
+                <div class="text-[11px] text-gray-300 space-y-0.5 pt-1">
+                    <p>🗓️ <strong>Tanggal:</strong> ${formattedTgl}</p>
+                    <p>⏰ <strong>Kick-Off:</strong> ${nextMatchData.jam}</p>
+                    <p>📍 <strong>Lokasi:</strong> ${nextMatchData.lokasi}</p>
+                    <p>👥 <strong>Pemain Siap:</strong> <strong class="text-green-400">${nextMatchData.rsvpHadir.length} Orang</strong></p>
+                </div>`;
+
+            document.getElementById('bannerNamaLawan').innerText = nextMatchData.lawan;
+            document.getElementById('bannerLogoLawan').src = nextMatchData.logoLawan;
+            document.getElementById('bannerTanggalJam').innerText = `🗓️ ${formattedTgl} • ${nextMatchData.jam}`;
+            document.getElementById('bannerLokasi').innerText = `📍 ${nextMatchData.lokasi}`;
+
+            const selectRSVP = document.getElementById('selectPemainRSVP');
+            selectRSVP.innerHTML = '<option value="">-- Pilih Nama Pemain --</option>';
+            dataPemain.forEach(p => {
+                selectRSVP.innerHTML += `<option value="${p.nama}">[#${p.noPunggung || '-'}] ${p.nama} (${p.nickname})</option>`;
+            });
+
+            document.getElementById('textTotalRSVP').innerText = `${nextMatchData.rsvpHadir.length} Siap`;
+            document.getElementById('countHadirNext').innerText = nextMatchData.rsvpHadir.length;
+            document.getElementById('countAbsenNext').innerText = nextMatchData.rsvpAbsen.length;
+
+            const listHadirContainer = document.getElementById('listPemainHadirNext');
+            listHadirContainer.innerHTML = nextMatchData.rsvpHadir.length === 0 ? '<p class="text-[10px] text-gray-500 italic">Belum ada yang mengonfirmasi hadir.</p>' : '';
+            nextMatchData.rsvpHadir.forEach((nama, idx) => {
+                const pInfo = dataPemain.find(p => p.nama === nama) || { noPunggung: '-', nickname: '' };
+                listHadirContainer.innerHTML += `
+                    <div class="flex justify-between items-center bg-gray-800 p-1.5 rounded">
+                        <span><strong>${idx + 1}. [#${pInfo.noPunggung || '-'}]</strong> ${nama} <span class="text-yellow-400 text-[10px]">(${pInfo.nickname})</span></span>
+                        <button onclick="hapusRSVP('${nama}')" class="text-red-400 font-bold px-1 text-[10px]">✕</button>
+                    </div>`;
+            });
+
+            const listAbsenContainer = document.getElementById('listPemainAbsenNext');
+            listAbsenContainer.innerHTML = nextMatchData.rsvpAbsen.length === 0 ? '<p class="text-[10px] text-gray-500 italic">Belum ada yang konfirmasi halangan.</p>' : '';
+            nextMatchData.rsvpAbsen.forEach((nama, idx) => {
+                const pInfo = dataPemain.find(p => p.nama === nama) || { noPunggung: '-', nickname: '' };
+                listAbsenContainer.innerHTML += `
+                    <div class="flex justify-between items-center bg-gray-800 p-1.5 rounded">
+                        <span><strong>${idx + 1}. [#${pInfo.noPunggung || '-'}]</strong> ${nama} <span class="text-yellow-400 text-[10px]">(${pInfo.nickname})</span></span>
+                        <button onclick="hapusRSVP('${nama}')" class="text-red-400 font-bold px-1 text-[10px]">✕</button>
+                    </div>`;
+            });
+        }
+
+        function shareWA_NextMatch() {
+            const formattedTgl = nextMatchData.tanggal ? new Date(nextMatchData.tanggal).toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }) : '-';
+            const linkUrl = nextMatchData.appUrl && nextMatchData.appUrl.startsWith('http') ? nextMatchData.appUrl : window.location.href;
+
+            let teks = "*CIANJUR PHARMACY MINI SOCCER FC*\n";
+            teks += "📢 *PERENCANAAN PERTANDINGAN BERIKUTNYA*\n";
+            teks += "------------------------------------\n";
+            teks += `⚽ *CPFC VS ${nextMatchData.lawan.toUpperCase()}*\n`;
+            teks += `🗓️️ *Hari/Tgl:* ${formattedTgl}\n`;
+            teks += `⏰ *Kick-Off:* ${nextMatchData.jam}\n`;
+            teks += `📍 *Lokasi:* ${nextMatchData.lokasi}\n`;
+            teks += "------------------------------------\n\n";
+
+            teks += `✅ *LIST PEMAIN HADIR (${nextMatchData.rsvpHadir.length}):*\n`;
+            if (nextMatchData.rsvpHadir.length === 0) {
+                teks += "_Belum ada pendaftar_\n";
+            } else {
+                nextMatchData.rsvpHadir.forEach((nama, i) => {
+                    const pInfo = dataPemain.find(p => p.nama === nama) || { noPunggung: '-', nickname: '' };
+                    teks += `${i + 1}. [#${pInfo.noPunggung || '-'}] ${nama} (${pInfo.nickname})\n`;
+                });
+            }
+
+            if (nextMatchData.rsvpAbsen.length > 0) {
+                teks += `\n❌ *ABSEN / HALANGAN (${nextMatchData.rsvpAbsen.length}):*\n`;
+                nextMatchData.rsvpAbsen.forEach((nama, i) => {
+                    const pInfo = dataPemain.find(p => p.nama === nama) || { noPunggung: '-', nickname: '' };
+                    teks += `${i + 1}. [#${pInfo.noPunggung || '-'}] ${nama} (${pInfo.nickname})\n`;
+                });
+            }
+
+            teks += "\n------------------------------------\n";
+            teks += "🌐 *Lakukan Pendaftaran / Absen Lewat Link Berikut:*\n";
+            teks += `${linkUrl}\n`;
+
+            window.open(`https://wa.me/?text=${encodeURIComponent(teks)}`, '_blank');
+        }
+
+        function downloadBannerMatch() {
+            const elementTarget = document.getElementById('bannerCard');
+            html2canvas(elementTarget, { scale: 2, useCORS: true, allowTaint: true }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = `Matchday_CPFC_vs_${nextMatchData.lawan}.png`;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            }).catch(err => {
+                console.error(err);
+                alert('Gagal mendownload banner.');
+            });
+        }
+
+        function isRiwayatAdaData(tgl) {
+            const item = dataPertemuan[tgl];
+            if (!item) return false;
+            const adaHadir = item.daftarHadir && item.daftarHadir.length > 0;
+            const adaPengeluaran = item.daftarPengeluaran && item.daftarPengeluaran.length > 0;
+            return (adaHadir || adaPengeluaran);
+        }
+
+        function renderBeranda() {
+            document.getElementById('homeTotalKas').innerText = 'Rp ' + hitungTotalKasKlubSemua().toLocaleString('id-ID');
+            document.getElementById('homeTotalSkuad').innerText = dataPemain.length + ' Pemain';
+            
+            const validDates = Object.keys(dataPertemuan).filter(tgl => isRiwayatAdaData(tgl));
+            document.getElementById('homeTotalSesi').innerText = validDates.length + ' Sesi';
+
+            let countFoto = (dataGaleriKlub.match || []).length + (dataGaleriKlub.jersey || []).length;
+            dataPemain.forEach(p => {
+                if (p.foto) countFoto++;
+                if (p.fotoLain) countFoto += p.fotoLain.length;
+            });
+            document.getElementById('homeTotalFoto').innerText = countFoto + ' Foto';
+
+            renderNextMatch();
+
+            const topPlayersContainer = document.getElementById('homeTopPlayers');
+            topPlayersContainer.innerHTML = '';
+
+            const rankingPemain = dataPemain.map(p => {
+                return { ...p, main: hitungKehadiranPemain(p.nama) };
+            }).sort((a, b) => b.main - a.main).slice(0, 3);
+
+            rankingPemain.forEach((p, idx) => {
+                const fotoSrc = p.foto || 'https://via.placeholder.com/100/111827/FFFFFF?text=' + encodeURIComponent(p.nickname || p.nama);
+                const badgeClass = idx === 0 ? 'bg-yellow-500 text-black' : idx === 1 ? 'bg-gray-300 text-black' : 'bg-amber-700 text-white';
+                
+                topPlayersContainer.innerHTML += `
+                    <div class="bg-gray-900 border border-gray-700 p-2 rounded flex flex-col items-center text-center relative cursor-pointer hover:border-yellow-500" onclick="bukaModalBio('${p.nama}')">
+                        <span class="absolute top-1 left-1 text-[9px] font-bold px-1.5 py-0.2 rounded-full ${badgeClass}">#${idx+1}</span>
+                        <img src="${fotoSrc}" class="w-12 h-12 object-cover rounded-full border border-yellow-500 my-1 player-img-click">
+                        <span class="text-[11px] font-bold text-white truncate w-full">${p.nickname || p.nama}</span>
+                        <span class="text-[9px] text-yellow-400 font-medium">${p.main} Sesi</span>
+                    </div>`;
+            });
+        }
+
+        function hitungTotalKasKlubSemua() {
+            let totalAkumulasi = 0;
+            Object.keys(dataPertemuan).forEach(tgl => {
+                const item = dataPertemuan[tgl];
+                (item.daftarHadir || []).forEach(h => totalAkumulasi += (parseInt(h.bayar) || 0));
+                (item.daftarPengeluaran || []).forEach(k => totalAkumulasi -= (parseInt(k.amount) || 0));
+            });
+            return totalAkumulasi;
+        }
+
+        function hitungKehadiranPemain(namaPemain) {
+            let total = 0;
+            Object.keys(dataPertemuan).forEach(tgl => {
+                const item = dataPertemuan[tgl];
+                if ((item.daftarHadir || []).some(h => h.nama === namaPemain)) total++;
+            });
+            return total;
+        }
+
+        function getRekapBulananData() {
+            const rekap = {};
+            Object.keys(dataPertemuan).forEach(tgl => {
+                if(!isRiwayatAdaData(tgl)) return;
+                const bulanKey = tgl.substring(0, 7);
+                if (!rekap[bulanKey]) rekap[bulanKey] = { masukan: 0, pengeluaran: 0, totalHadir: 0, sesiCount: 0 };
+                const item = dataPertemuan[tgl];
+                rekap[bulanKey].sesiCount += 1;
+                (item.daftarHadir || []).forEach(h => {
+                    rekap[bulanKey].masukan += (parseInt(h.bayar) || 0);
+                    rekap[bulanKey].totalHadir += 1;
+                });
+                (item.daftarPengeluaran || []).forEach(k => {
+                    rekap[bulanKey].pengeluaran += (parseInt(k.amount) || 0);
+                });
+            });
+            return rekap;
+        }
+
+        function getPertemuanAktif() {
+            const tgl = document.getElementById('inputTanggal').value;
+            if (!dataPertemuan[tgl]) {
+                dataPertemuan[tgl] = { daftarHadir: [], daftarPengeluaran: [] };
+            }
+            if (!dataPertemuan[tgl].daftarHadir) dataPertemuan[tgl].daftarHadir = [];
+            if (!dataPertemuan[tgl].daftarPengeluaran) dataPertemuan[tgl].daftarPengeluaran = [];
+            return { tgl, data: dataPertemuan[tgl] };
+        }
+
+        function render(refreshAnggotaUI = true) {
+            const { data } = getPertemuanAktif();
+
+            document.getElementById('textTotalKasKlub').innerText = 'Rp ' + hitungTotalKasKlubSemua().toLocaleString('id-ID');
+
+            const containerMulti = document.getElementById('containerMultiSelect');
+            if (containerMulti) {
+                containerMulti.innerHTML = '';
+                const pemainsSudahHadir = data.daftarHadir.map(h => h.nama);
+                const pemainsBelumHadir = dataPemain.filter(p => !pemainsSudahHadir.includes(p.nama));
+
+                if (pemainsBelumHadir.length === 0) {
+                    containerMulti.innerHTML = `<p class="text-gray-500 text-[11px] text-center italic py-2">Semua anggota terdaftar sudah masuk daftar hadir.</p>`;
+                } else {
+                    pemainsBelumHadir.forEach(p => {
+                        containerMulti.innerHTML += `
+                            <label class="flex items-center gap-2 text-xs bg-gray-800 p-1.5 rounded cursor-pointer hover:bg-gray-700">
+                                <input type="checkbox" name="chkPemainHadir" value="${p.nama}" class="w-4 h-4 accent-yellow-500 rounded">
+                                <span class="text-yellow-500 font-bold w-12">[#${p.noPunggung || '-'}]</span>
+                                <span class="text-white font-medium flex-1">${p.nama} <span class="text-gray-400 text-[10px]">(${p.nickname})</span></span>
+                            </label>`;
+                    });
+                }
+            }
+
+            document.getElementById('totalAnggota').innerText = `Total: ${dataPemain.length} Orang`;
+            if (refreshAnggotaUI) {
+                const containerPemain = document.getElementById('listPemain');
+                containerPemain.innerHTML = '';
+                dataPemain.forEach((p, i) => {
+                    if (isAdmin) {
+                        containerPemain.innerHTML += `
+                            <div class="bg-gray-900 p-2.5 rounded text-xs border border-gray-800 space-y-2">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-gray-500 w-5 text-right font-bold">${i + 1}.</span>
+                                    <input type="text" value="${p.noPunggung || ''}" placeholder="No" onchange="editPemain(${i}, 'noPunggung', this.value)" class="w-12 bg-gray-800 border border-gray-700 rounded p-1 text-center font-bold text-yellow-500">
+                                    <input type="text" value="${p.nama || ''}" placeholder="Nama Lengkap" onchange="editPemain(${i}, 'nama', this.value)" class="flex-1 bg-gray-800 border border-gray-700 rounded p-1 text-white font-medium">
+                                    <button onclick="hapusPemain(${i})" class="bg-red-800 hover:bg-red-700 px-2 py-1 rounded text-[10px] text-white">Hapus</button>
+                                </div>
+                                <div class="flex gap-2 pl-7">
+                                    <input type="text" value="${p.nickname || ''}" placeholder="Nickname" onchange="editPemain(${i}, 'nickname', this.value)" class="w-1/3 bg-gray-800 border border-gray-700 rounded p-1 text-yellow-400">
+                                    <input type="text" value="${p.bio || ''}" placeholder="Biografi singkat" onchange="editPemain(${i}, 'bio', this.value)" class="flex-1 bg-gray-800 border border-gray-700 rounded p-1 text-gray-300">
+                                </div>
+                            </div>`;
+                    } else {
+                        containerPemain.innerHTML += `
+                            <div class="flex items-center justify-between bg-gray-900 p-2 rounded text-xs border border-gray-800 cursor-pointer hover:bg-gray-800" onclick="bukaModalBio('${p.nama}')">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-gray-500 w-5 text-right font-bold">${i + 1}.</span>
+                                    <span class="text-yellow-500 font-bold">[#${p.noPunggung || '-'}]</span>
+                                    <span class="text-white font-medium">${p.nama} <strong class="text-yellow-400">(${p.nickname})</strong></span>
+                                </div>
+                                <span class="text-[10px] text-gray-400 underline">Profil 🔍</span>
+                            </div>`;
+                    }
+                });
+            }
+
+            const containerAbsen = document.getElementById('listAbsen');
+            containerAbsen.innerHTML = '';
+            let totalMasuk = 0;
+
+            if (data.daftarHadir.length === 0) {
+                containerAbsen.innerHTML = '<p class="text-xs text-gray-500 text-center py-2">Belum ada anggota yang dimasukkan.</p>';
+            } else {
+                data.daftarHadir.forEach((item, index) => {
+                    const infoPemain = dataPemain.find(p => p.nama === item.nama) || { noPunggung: '-', nickname: '' };
+                    const bayar = parseInt(item.bayar) || 0;
+                    totalMasuk += bayar;
+
+                    if (isAdmin) {
+                        containerAbsen.innerHTML += `
+                            <div class="flex justify-between items-center bg-gray-900 p-2 rounded text-xs border border-gray-800">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-gray-500 w-4">${index + 1}.</span>
+                                    <span class="text-yellow-500 font-bold">[#${infoPemain.noPunggung || '-'}]</span>
+                                    <span class="text-white font-semibold">${item.nama} <span class="text-yellow-400 text-[10px]">(${infoPemain.nickname})</span></span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <input type="number" value="${bayar}" onchange="updateBayarHadir(${index}, this.value)" class="w-20 bg-gray-800 border border-gray-700 rounded p-1 text-right text-xs text-white">
+                                    <button onclick="hapusHadir(${index})" class="text-red-500 font-bold px-1">✕</button>
+                                </div>
+                            </div>`;
+                    } else {
+                        containerAbsen.innerHTML += `
+                            <div class="flex justify-between items-center bg-gray-900 p-2 rounded text-xs border border-gray-800">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-gray-500 w-4">${index + 1}.</span>
+                                    <span class="text-yellow-500 font-bold">[#${infoPemain.noPunggung || '-'}]</span>
+                                    <span class="text-white font-semibold">${item.nama} <span class="text-yellow-400 text-[10px]">(${infoPemain.nickname})</span></span>
+                                </div>
+                                <span class="text-green-400 font-bold text-xs">Rp ${bayar.toLocaleString('id-ID')}</span>
+                            </div>`;
+                    }
+                });
+            }
+
+            const containerKeluar = document.getElementById('containerPengeluaran');
+            containerKeluar.innerHTML = '';
+            let totalKeluar = 0;
+
+            (data.daftarPengeluaran || []).forEach((item, i) => {
+                totalKeluar += item.amount;
+                containerKeluar.innerHTML += `
+                    <div class="flex justify-between items-center bg-red-950/40 border border-red-900 p-2 rounded text-xs">
+                        <span>${item.desc}</span>
+                        <div class="flex items-center gap-2">
+                            <span class="text-red-400 font-bold">- Rp ${item.amount.toLocaleString('id-ID')}</span>
+                            ${isAdmin ? `<button onclick="hapusPengeluaran(${i})" class="text-red-500 font-bold">✕</button>` : ''}
+                        </div>
+                    </div>`;
+            });
+
+            document.getElementById('textTotalHadir').innerText = `Hadir: ${data.daftarHadir.length} Orang`;
+            document.getElementById('textTotalMasuk').innerText = 'Rp ' + totalMasuk.toLocaleString('id-ID');
+            document.getElementById('textTotalKeluar').innerText = 'Rp ' + totalKeluar.toLocaleString('id-ID');
+            document.getElementById('textSisaKas').innerText = 'Rp ' + (totalMasuk - totalKeluar).toLocaleString('id-ID');
+
+            renderBeranda();
+            renderGaleriPemain();
+            renderGaleriKlub();
+            renderRiwayat();
+        }
+
+        function renderGaleriPemain() {
+            const container = document.getElementById('containerGridPemain');
+            container.innerHTML = '';
+
+            dataPemain.forEach((p, idx) => {
+                const totalKehadiran = hitungKehadiranPemain(p.nama);
+                const bgFoto = p.foto || 'https://via.placeholder.com/200/111827/FFFFFF?text=' + encodeURIComponent(p.nickname || p.nama);
+
+                container.innerHTML += `
+                    <div class="relative rounded-xl overflow-hidden border-2 border-yellow-500/60 shadow-lg h-44 flex flex-col justify-end p-2.5 group cursor-pointer player-img-click" style="background: url('${bgFoto}') center/cover no-repeat;" onclick="bukaModalBio('${p.nama}')">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent"></div>
+                        <span class="absolute top-2 right-2 bg-yellow-500 text-black text-[10px] font-black px-1.5 py-0.5 rounded shadow">#${p.noPunggung || '-'}</span>
+                        <div class="relative z-10 space-y-0.5">
+                            <h4 class="text-xs font-black text-yellow-400 truncate">${p.nickname || p.nama}</h4>
+                            <p class="text-[10px] text-gray-300 truncate">${p.nama}</p>
+                            <div class="text-[9px] text-gray-400 pt-1 border-t border-yellow-500/30 flex justify-between">
+                                <span>Main: <strong class="text-green-400">${totalKehadiran} Sesi</strong></span>
+                                <span class="text-yellow-300 underline">Profil 🔍</span>
+                            </div>
+                        </div>
+                    </div>`;
+            });
+        }
+
+        function bukaModalBio(namaPemain) {
+            const p = dataPemain.find(item => item.nama === namaPemain);
+            if (!p) return;
+
+            currentSelectedPlayerName = p.nama;
+
+            document.getElementById('modalFoto').src = p.foto || 'https://via.placeholder.com/150/111827/FFFFFF?text=' + encodeURIComponent(p.nickname || p.nama);
+            document.getElementById('modalNoPunggung').innerText = '#' + (p.noPunggung || '-');
+            document.getElementById('modalNama').innerText = p.nama;
+            document.getElementById('modalNickname').innerText = `"${p.nickname || p.nama}"`;
+            document.getElementById('modalBioText').innerText = p.bio || "Belum ada biografi singkat.";
+            
+            const totalHadir = hitungKehadiranPemain(p.nama);
+            document.getElementById('modalKehadiran').innerText = `Total Kehadiran Latihan: ${totalHadir} Sesi`;
+
+            const containerFotoLain = document.getElementById('modalContainerFotoLain');
+            containerFotoLain.innerHTML = '';
+            const fotoLainArr = p.fotoLain || [];
+
+            if(fotoLainArr.length === 0) {
+                containerFotoLain.innerHTML = `<span class="text-[10px] text-gray-500 italic col-span-3">Belum ada foto latar tambahan.</span>`;
+            } else {
+                fotoLainArr.forEach((imgSrc, fIdx) => {
+                    containerFotoLain.innerHTML += `
+                        <div class="relative group rounded overflow-hidden border border-gray-700 bg-gray-900 h-16">
+                            <img src="${imgSrc}" class="w-full h-full object-cover player-img-click" onclick="bukaModalKomentar('${imgSrc}')" title="Klik untuk komentar">
+                            ${isAdmin ? `<button onclick="hapusFotoLainPemain('${p.nama}', ${fIdx})" class="absolute top-0.5 right-0.5 bg-red-800 text-white text-[8px] font-bold rounded-full w-4 h-4 flex items-center justify-center">✕</button>` : ''}
+                        </div>`;
+                });
+            }
+
+            const labelUpload = document.getElementById('labelUploadFotoLain');
+            if (labelUpload) {
+                labelUpload.setAttribute('for', 'inputFotoLainPemain');
+            }
+
+            document.getElementById('modalBio').classList.remove('hidden');
+        }
+
+        function tutupModalBio() {
+            document.getElementById('modalBio').classList.add('hidden');
+            currentSelectedPlayerName = null;
+        }
+
+        function uploadFotoProfilUtama(event) {
+            if (!isAdmin || !currentSelectedPlayerName) return;
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const p = dataPemain.find(item => item.nama === currentSelectedPlayerName);
+                    if (p) {
+                        p.foto = e.target.result;
+                        simpanData(false);
+                        bukaModalBio(p.nama);
+                        alert('Foto profil utama pemain berhasil diperbarui!');
+                    }
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function uploadFotoLainPemain(event) {
+            if (!isAdmin || !currentSelectedPlayerName) return;
+            const files = event.target.files;
+            if (!files || files.length === 0) return;
+
+            const p = dataPemain.find(item => item.nama === currentSelectedPlayerName);
+            if (!p) return;
+
+            if(!p.fotoLain) p.fotoLain = [];
+            let processed = 0;
+
+            Array.from(files).forEach(file => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    p.fotoLain.push(e.target.result);
+                    processed++;
+                    if(processed === files.length) {
+                        event.target.value = '';
+                        simpanData(false);
+                        bukaModalBio(p.nama);
+                        alert('Foto latar tambahan berhasil ditambahkan!');
+                    }
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        function hapusFotoLainPemain(namaPemain, fIndex) {
+            if (!isAdmin) return;
+            const p = dataPemain.find(item => item.nama === namaPemain);
+            if (p && p.fotoLain) {
+                if(confirm('Hapus foto ini dari latar profil?')) {
+                    p.fotoLain.splice(fIndex, 1);
+                    simpanData(false);
+                    bukaModalBio(namaPemain);
+                }
+            }
+        }
+
+        function simpanGaleriKlubBaru(event) {
+            if (!isAdmin) return;
+            const kategori = document.getElementById('inputKategoriGaleri').value;
+            const subJudul = document.getElementById('inputSubJudulGaleri').value.trim() || "Album Klub CPFC";
+            const inputFiles = document.getElementById('inputFileGaleriBaru').files;
+
+            if (!inputFiles || inputFiles.length === 0) {
+                alert('Pilih setidaknya satu file foto!');
+                return;
+            }
+
+            let loadedCount = 0;
+            let listFotoBaru = [];
+
+            Array.from(inputFiles).forEach(file => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    listFotoBaru.push(e.target.result);
+                    loadedCount++;
+                    if(loadedCount === inputFiles.length) {
+                        if(!dataGaleriKlub[kategori]) dataGaleriKlub[kategori] = [];
+                        dataGaleriKlub[kategori].push({
+                            subJudul: subJudul,
+                            tanggalUpload: new Date().toLocaleDateString('id-ID', {day: 'numeric', month: 'short', year: 'numeric'}),
+                            fotoList: listFotoBaru
+                        });
+                        document.getElementById('inputSubJudulGaleri').value = '';
+                        document.getElementById('inputFileGaleriBaru').value = '';
+                        simpanData(false);
+                        alert('Foto berhasil diunggah ke Galeri!');
+                    }
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        function hapusAlbumGaleriKlub(kategori, indexAlbum) {
+            if (!isAdmin) return;
+            if(confirm('Yakin ingin menghapus seluruh album foto ini?')) {
+                dataGaleriKlub[kategori].splice(indexAlbum, 1);
+                simpanData(false);
+            }
+        }
+
+        function renderGaleriKlub() {
+            const containerJersey = document.getElementById('containerGaleriJersey');
+            containerJersey.innerHTML = '';
+            const jerseyAlbums = dataGaleriKlub.jersey || [];
+
+            if(jerseyAlbums.length === 0) {
+                containerJersey.innerHTML = `<p class="text-xs text-gray-500 text-center italic py-2">Belum ada galeri model jersey.</p>`;
+            } else {
+                jerseyAlbums.forEach((album, aIdx) => {
+                    let fotosHTML = album.fotoList.map((src, fIdx) => `
+                        <div class="relative rounded overflow-hidden border border-gray-700 bg-gray-900 h-20">
+                            <img src="${src}" class="w-full h-full object-cover player-img-click" onclick="bukaModalKomentar('${src}')" title="Klik untuk lihat/komentar">
+                        </div>
+                    `).join('');
+
+                    containerJersey.innerHTML += `
+                        <div class="bg-gray-900 p-2.5 rounded border border-gray-700 space-y-2">
+                            <div class="flex justify-between items-center text-xs border-b border-gray-800 pb-1">
+                                <div>
+                                    <span class="font-bold text-yellow-400 block">👕 ${album.subJudul}</span>
+                                    <span class="text-[9px] text-gray-400">${album.tanggalUpload}</span>
+                                </div>
+                                ${isAdmin ? `<button onclick="hapusAlbumGaleriKlub('jersey', ${aIdx})" class="bg-red-800 text-white font-bold px-2 py-0.5 rounded text-[10px]">Hapus Album</button>` : ''}
+                            </div>
+                            <div class="grid grid-cols-3 gap-2">${fotosHTML}</div>
+                        </div>`;
+                });
+            }
+
+            const containerMatch = document.getElementById('containerGaleriMatch');
+            containerMatch.innerHTML = '';
+            const matchAlbums = dataGaleriKlub.match || [];
+
+            if(matchAlbums.length === 0) {
+                containerMatch.innerHTML = `<p class="text-xs text-gray-500 text-center italic py-2">Belum ada dokumentasi match.</p>`;
+            } else {
+                matchAlbums.forEach((album, aIdx) => {
+                    let fotosHTML = album.fotoList.map((src, fIdx) => `
+                        <div class="relative rounded overflow-hidden border border-gray-700 bg-gray-900 h-20">
+                            <img src="${src}" class="w-full h-full object-cover player-img-click" onclick="bukaModalKomentar('${src}')" title="Klik untuk lihat/komentar">
+                        </div>
+                    `).join('');
+
+                    containerMatch.innerHTML += `
+                        <div class="bg-gray-900 p-2.5 rounded border border-gray-700 space-y-2">
+                            <div class="flex justify-between items-center text-xs border-b border-gray-800 pb-1">
+                                <div>
+                                    <span class="font-bold text-yellow-400 block">⚽ ${album.subJudul}</span>
+                                    <span class="text-[9px] text-gray-400">${album.tanggalUpload}</span>
+                                </div>
+                                ${isAdmin ? `<button onclick="hapusAlbumGaleriKlub('match', ${aIdx})" class="bg-red-800 text-white font-bold px-2 py-0.5 rounded text-[10px]">Hapus Album</button>` : ''}
+                            </div>
+                            <div class="grid grid-cols-3 gap-2">${fotosHTML}</div>
+                        </div>`;
+                });
+            }
+        }
+
+        function bukaModalKomentar(fotoUrl) {
+            activeKomentarFotoUrl = fotoUrl;
+            document.getElementById('previewKomentarImg').src = fotoUrl;
+            document.getElementById('inputNamaPengirim').value = '';
+            document.getElementById('inputIsiKomentar').value = '';
+            renderListKomentar();
+            document.getElementById('modalKomentar').classList.remove('hidden');
+        }
+
+        function tutupModalKomentar() {
+            document.getElementById('modalKomentar').classList.add('hidden');
+            activeKomentarFotoUrl = null;
+        }
+
+        function kirimKomentar() {
+            if (!activeKomentarFotoUrl) return;
+            const nama = document.getElementById('inputNamaPengirim').value.trim();
+            const isi = document.getElementById('inputIsiKomentar').value.trim();
+
+            if (!nama || !isi) {
+                alert('Nama dan isi komentar harus diisi!');
+                return;
+            }
+
+            if (!dataKomentarGaleri[activeKomentarFotoUrl]) {
+                dataKomentarGaleri[activeKomentarFotoUrl] = [];
+            }
+
+            const now = new Date();
+            const timeStr = `${now.getDate()} ${now.toLocaleDateString('id-ID', {month:'short'})} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+
+            dataKomentarGaleri[activeKomentarFotoUrl].push({
+                nama: nama,
+                isi: isi,
+                tanggal: timeStr
+            });
+
+            document.getElementById('inputIsiKomentar').value = '';
+            simpanData(false);
+            renderListKomentar();
+        }
+
+        function renderListKomentar() {
+            const container = document.getElementById('listKomentarContainer');
+            container.innerHTML = '';
+            const komArr = dataKomentarGaleri[activeKomentarFotoUrl] || [];
+
+            if (komArr.length === 0) {
+                container.innerHTML = `<p class="text-gray-500 italic text-center py-2">Belum ada komentar pada foto ini. Jadilah yang pertama berkomentar!</p>`;
+                return;
+            }
+
+            komArr.forEach((k, kIdx) => {
+                container.innerHTML += `
+                    <div class="bg-gray-900 p-2 rounded border border-gray-700 space-y-0.5 relative group">
+                        <div class="flex justify-between font-bold text-yellow-400 text-[11px]">
+                            <span>👤 ${k.nama}</span>
+                            <span class="text-[9px] text-gray-400 font-normal">${k.tanggal}</span>
+                        </div>
+                        <p class="text-gray-200 text-xs">${k.isi}</p>
+                        ${isAdmin ? `<button onclick="hapusKomentar(${kIdx})" class="absolute top-1 right-1 text-red-400 text-[9px] font-bold">✕</button>` : ''}
+                    </div>`;
+            });
+        }
+
+        function hapusKomentar(kIndex) {
+            if (!isAdmin || !activeKomentarFotoUrl) return;
+            if (dataKomentarGaleri[activeKomentarFotoUrl]) {
+                dataKomentarGaleri[activeKomentarFotoUrl].splice(kIndex, 1);
+                simpanData(false);
+                renderListKomentar();
+            }
+        }
+
+        function togglePilihSemua(status) {
+            const checkboxes = document.querySelectorAll('input[name="chkPemainHadir"]');
+            checkboxes.forEach(chk => chk.checked = status);
+        }
+
+        function tambahKehadiranMulti() {
+            if (!isAdmin) return;
+            const checkboxes = document.querySelectorAll('input[name="chkPemainHadir"]:checked');
+            const nominalBayar = parseInt(document.getElementById('inputBayarKasMulti').value) || 0;
+
+            if (checkboxes.length === 0) {
+                alert('Silakan pilih setidaknya satu pemain terlebih dahulu!');
+                return;
+            }
+
+            const { data } = getPertemuanAktif();
+            checkboxes.forEach(chk => {
+                const nama = chk.value;
+                if (!data.daftarHadir.some(h => h.nama === nama)) {
+                    data.daftarHadir.push({ nama, bayar: nominalBayar });
+                }
+            });
+
+            simpanData();
+        }
+
+        function updateBayarHadir(index, nominal) {
+            if (!isAdmin) return;
+            const { data } = getPertemuanAktif();
+            data.daftarHadir[index].bayar = parseInt(nominal) || 0;
+            simpanData();
+        }
+
+        function hapusHadir(index) {
+            if (!isAdmin) return;
+            const { data } = getPertemuanAktif();
+            data.daftarHadir.splice(index, 1);
+            simpanData();
+        }
+
+        function editPemain(index, field, value) {
+            if (!isAdmin) return;
+            const namaLama = dataPemain[index].nama;
+            dataPemain[index][field] = value.trim();
+
+            if (field === 'nama' && namaLama !== value.trim()) {
+                const namaBaru = value.trim();
+                Object.keys(dataPertemuan).forEach(tgl => {
+                    const p = dataPertemuan[tgl];
+                    if (p.daftarHadir) {
+                        p.daftarHadir.forEach(h => {
+                            if (h.nama === namaLama) h.nama = namaBaru;
+                        });
+                    }
+                });
+            }
+
+            simpanData(false);
+        }
+
+        function tambahPengeluaran() {
+            if (!isAdmin) return;
+            const { data } = getPertemuanAktif();
+            const desc = document.getElementById('inputDescKeluar').value.trim();
+            const amount = parseInt(document.getElementById('inputAmountKeluar').value);
+
+            if(desc && amount) {
+                data.daftarPengeluaran.push({ desc, amount });
+                document.getElementById('inputDescKeluar').value = '';
+                document.getElementById('inputAmountKeluar').value = '';
+                simpanData();
+            }
+        }
+
+        function hapusPengeluaran(index) {
+            if (!isAdmin) return;
+            const { data } = getPertemuanAktif();
+            data.daftarPengeluaran.splice(index, 1);
+            simpanData();
+        }
+
+        function formatNamaBulan(yyyyMM) {
+            const [tahun, bulan] = yyyyMM.split('-');
+            const date = new Date(tahun, parseInt(bulan) - 1, 1);
+            return date.toLocaleDateString('id-ID', { month: 'long', year: 'numeric' });
+        }
+
+        function renderRiwayat() {
+            const containerBulanan = document.getElementById('containerRekapBulanan');
+            if (containerBulanan) {
+                containerBulanan.innerHTML = '';
+                const rekapBulanan = getRekapBulananData();
+                const listBulan = Object.keys(rekapBulanan).sort().reverse();
+
+                if (listBulan.length === 0) {
+                    containerBulanan.innerHTML = `<p class="text-xs text-gray-500 text-center py-2">Belum ada data rekap bulanan.</p>`;
+                } else {
+                    listBulan.forEach(bln => {
+                        const bData = rekapBulanan[bln];
+                        const sisa = bData.masukan - bData.pengeluaran;
+                        containerBulanan.innerHTML += `
+                            <div class="bg-gray-900 p-2.5 rounded border border-gray-700 text-xs">
+                                <div class="flex justify-between items-center font-bold text-yellow-400 mb-1">
+                                    <span>🗓️ ${formatNamaBulan(bln)}</span>
+                                    <span class="text-[10px] bg-gray-800 text-gray-300 px-1.5 py-0.5 rounded">${bData.sesiCount} Sesi Pertemuan</span>
+                                </div>
+                                <div class="grid grid-cols-3 gap-1 text-[11px] text-center mt-1 pt-1 border-t border-gray-800">
+                                    <div><span class="text-gray-400 block text-[9px]">Kas Masuk</span><span class="text-green-400 font-bold">Rp ${bData.masukan.toLocaleString('id-ID')}</span></div>
+                                    <div><span class="text-gray-400 block text-[9px]">Pengeluaran</span><span class="text-red-400 font-bold">Rp ${bData.pengeluaran.toLocaleString('id-ID')}</span></div>
+                                    <div><span class="text-gray-400 block text-[9px]">Bersih</span><span class="text-yellow-500 font-bold">Rp ${sisa.toLocaleString('id-ID')}</span></div>
+                                </div>
+                            </div>`;
+                    });
+                }
+            }
+
+            const container = document.getElementById('listRiwayat');
+            if (container) {
+                container.innerHTML = '';
+                const listTanggal = Object.keys(dataPertemuan).filter(tgl => isRiwayatAdaData(tgl)).sort().reverse();
+
+                if (listTanggal.length === 0) {
+                    container.innerHTML = `<p class="text-xs text-gray-500 text-center py-4">Belum ada riwayat pertemuan.</p>`;
+                    return;
+                }
+
+                listTanggal.forEach(tgl => {
+                    const item = dataPertemuan[tgl];
+                    let msk = 0; let klr = 0;
+                    (item.daftarHadir || []).forEach(v => msk += (parseInt(v.bayar) || 0));
+                    (item.daftarPengeluaran || []).forEach(v => klr += v.amount);
+
+                    container.innerHTML += `
+                        <div class="flex justify-between items-center bg-gray-900 p-2.5 rounded border border-gray-800 text-xs">
+                            <div>
+                                <div class="font-bold text-yellow-500">${tgl}</div>
+                                <div class="text-[10px] text-gray-400">Hadir: ${(item.daftarHadir || []).length} | Masuk: Rp ${msk.toLocaleString('id-ID')} | Keluar: Rp ${klr.toLocaleString('id-ID')}</div>
+                            </div>
+                            <div class="flex items-center gap-1">
+                                <button onclick="pilihTanggalRiwayat('${tgl}')" class="bg-yellow-600 hover:bg-yellow-500 text-black font-bold px-2 py-1 rounded text-[10px]">Buka</button>
+                                ${isAdmin ? `<button onclick="hapusRiwayat('${tgl}')" class="bg-red-800 hover:bg-red-700 text-white font-bold px-2 py-1 rounded text-[10px]">Hapus</button>` : ''}
+                            </div>
+                        </div>`;
+                });
+            }
+        }
+
+        function pilihTanggalRiwayat(tgl) {
+            document.getElementById('inputTanggal').value = tgl;
+            setTab('absenKas');
+            render();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function hapusRiwayat(tgl) {
+            if (!isAdmin) return;
+            if(confirm(`Yakin ingin menghapus seluruh riwayat pertemuan tanggal ${tgl}?`)) {
+                delete dataPertemuan[tgl];
+                simpanData();
+            }
+        }
+
+        function downloadGambarHadir() {
+            const { tgl, data } = getPertemuanAktif();
+            const logoSrc = document.getElementById('imgLogo').src;
+            
+            document.getElementById('cardLogoHadir').src = logoSrc;
+            document.getElementById('cardTanggalHadir').innerText = `DAFTAR PESERTA HADIR (${tgl})`;
+            document.getElementById('timestampHadir').innerText = getFormattedTimestamp();
+            
+            const container = document.getElementById('cardListHadir');
+            container.innerHTML = '';
+
+            if (data.daftarHadir.length === 0) {
+                alert('Belum ada anggota yang dimasukkan!');
+                return;
+            }
+
+            data.daftarHadir.forEach((item, index) => {
+                const infoPemain = dataPemain.find(p => p.nama === item.nama) || { noPunggung: '-', nickname: '' };
+                const bayar = parseInt(item.bayar) || 0;
+                container.innerHTML += `
+                    <div class="flex justify-between items-center bg-gray-800 p-2.5 rounded border border-gray-700">
+                        <span><strong class="text-yellow-500 mr-2">${index + 1}. [#${infoPemain.noPunggung || '-'}]</strong> ${item.nama} <span class="text-yellow-400 text-xs">(${infoPemain.nickname})</span></span>
+                        <span class="text-green-400 font-bold text-xs">Rp ${bayar.toLocaleString('id-ID')}</span>
+                    </div>`;
+            });
+
+            const elementTarget = document.getElementById('renderHadir');
+            elementTarget.style.position = 'absolute';
+            elementTarget.style.left = '0px';
+            elementTarget.style.top = '0px';
+            elementTarget.style.zIndex = '99999';
+            elementTarget.style.opacity = '1';
+
+            html2canvas(elementTarget, { scale: 2, useCORS: true, allowTaint: true }).then(canvas => {
+                elementTarget.style.position = 'fixed';
+                elementTarget.style.left = '-9999px';
+                elementTarget.style.opacity = '0';
+
+                const link = document.createElement('a');
+                link.download = `CPFC_Hadir_${tgl}.png`;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            }).catch(err => {
+                elementTarget.style.position = 'fixed';
+                elementTarget.style.left = '-9999px';
+                elementTarget.style.opacity = '0';
+                console.error(err);
+                alert('Gagal mendownload gambar.');
+            });
+        }
+
+        function downloadGambarKas() {
+            const { tgl, data } = getPertemuanAktif();
+            const logoSrc = document.getElementById('imgLogo').src;
+
+            document.getElementById('cardLogoKas').src = logoSrc;
+            document.getElementById('cardTanggalKas').innerText = `LAPORAN KAS PERTEMUAN (${tgl})`;
+            document.getElementById('timestampKas').innerText = getFormattedTimestamp();
+
+            let totalMasuk = 0;
+            data.daftarHadir.forEach(item => totalMasuk += (parseInt(item.bayar) || 0));
+
+            let totalKeluar = 0;
+            const containerKeluar = document.getElementById('cardListPengeluaran');
+            containerKeluar.innerHTML = '';
+
+            (data.daftarPengeluaran || []).forEach(k => {
+                totalKeluar += k.amount;
+                containerKeluar.innerHTML += `
+                    <div class="flex justify-between text-gray-300 py-0.5">
+                        <span>• ${k.desc}</span>
+                        <span class="text-red-400 font-bold">- Rp ${k.amount.toLocaleString('id-ID')}</span>
+                    </div>`;
+            });
+
+            if ((data.daftarPengeluaran || []).length === 0) {
+                containerKeluar.innerHTML = `<span class="text-gray-500 italic">Tidak ada pengeluaran</span>`;
+            }
+
+            document.getElementById('cardKasMasuk').innerText = 'Rp ' + totalMasuk.toLocaleString('id-ID');
+            document.getElementById('cardKasSisaPertemuan').innerText = 'Rp ' + (totalMasuk - totalKeluar).toLocaleString('id-ID');
+            document.getElementById('cardKasAkhirAkumulasi').innerText = 'Rp ' + hitungTotalKasKlubSemua().toLocaleString('id-ID');
+
+            const elementTarget = document.getElementById('renderKas');
+            elementTarget.style.position = 'absolute';
+            elementTarget.style.left = '0px';
+            elementTarget.style.top = '0px';
+            elementTarget.style.zIndex = '99999';
+            elementTarget.style.opacity = '1';
+
+            html2canvas(elementTarget, { scale: 2, useCORS: true, allowTaint: true }).then(canvas => {
+                elementTarget.style.position = 'fixed';
+                elementTarget.style.left = '-9999px';
+                elementTarget.style.opacity = '0';
+
+                const link = document.createElement('a');
+                link.download = `CPFC_Kas_${tgl}.png`;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            }).catch(err => {
+                elementTarget.style.position = 'fixed';
+                elementTarget.style.left = '-9999px';
+                elementTarget.style.opacity = '0';
+                console.error(err);
+                alert('Gagal mendownload gambar.');
+            });
+        }
+
+        function downloadGambarBulanan() {
+            const logoSrc = document.getElementById('imgLogo').src;
+            document.getElementById('cardLogoBulanan').src = logoSrc;
+            document.getElementById('timestampBulanan').innerText = getFormattedTimestamp();
+
+            const rekapBulanan = getRekapBulananData();
+            const listBulan = Object.keys(rekapBulanan).sort().reverse();
+            const containerBulananCard = document.getElementById('cardListBulanan');
+            containerBulananCard.innerHTML = '';
+
+            if (listBulan.length === 0) {
+                alert('Belum ada data transaksi!');
+                return;
+            }
+
+            listBulan.forEach(bln => {
+                const bData = rekapBulanan[bln];
+                const sisa = bData.masukan - bData.pengeluaran;
+                containerBulananCard.innerHTML += `
+                    <div class="bg-gray-800 p-3 rounded border border-gray-700">
+                        <div class="flex justify-between font-bold text-yellow-400 border-b border-gray-700 pb-1 mb-2">
+                            <span>${formatNamaBulan(bln)}</span>
+                            <span class="text-gray-300 font-normal">${bData.sesiCount} Sesi</span>
+                        </div>
+                        <div class="space-y-1 text-gray-300">
+                            <div class="flex justify-between">
+                                <span>Total Kas Masuk:</span>
+                                <span class="text-green-400 font-bold">Rp ${bData.masukan.toLocaleString('id-ID')}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>Total Pengeluaran:</span>
+                                <span class="text-red-400 font-bold">Rp ${bData.pengeluaran.toLocaleString('id-ID')}</span>
+                            </div>
+                            <div class="flex justify-between border-t border-gray-700 pt-1 font-bold">
+                                <span class="text-yellow-500">Saldo Bersih Bulan Ini:</span>
+                                <span class="text-yellow-400">Rp ${sisa.toLocaleString('id-ID')}</span>
+                            </div>
+                        </div>
+                    </div>`;
+            });
+
+            document.getElementById('cardBulananTotalAkumulasi').innerText = 'Rp ' + hitungTotalKasKlubSemua().toLocaleString('id-ID');
+
+            const elementTarget = document.getElementById('renderBulanan');
+            elementTarget.style.position = 'absolute';
+            elementTarget.style.left = '0px';
+            elementTarget.style.top = '0px';
+            elementTarget.style.zIndex = '99999';
+            elementTarget.style.opacity = '1';
+
+            html2canvas(elementTarget, { scale: 2, useCORS: true, allowTaint: true }).then(canvas => {
+                elementTarget.style.position = 'fixed';
+                elementTarget.style.left = '-9999px';
+                elementTarget.style.opacity = '0';
+
+                const link = document.createElement('a');
+                link.download = `CPFC_Rekap_Bulanan_Global.png`;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            }).catch(err => {
+                elementTarget.style.position = 'fixed';
+                elementTarget.style.left = '-9999px';
+                elementTarget.style.opacity = '0';
+                console.error(err);
+                alert('Gagal mendownload gambar.');
+            });
+        }
+
+        function shareWA() {
+            const { tgl, data } = getPertemuanAktif();
+            let totalMasuk = 0; let totalKeluar = 0;
+
+            let teks = "*CIANJUR PHARMACY MINI SOCCER*\n";
+            teks += `*LAPORAN PERTEMUAN TANGGAL:* ${tgl}\n`;
+            teks += "------------------------------------\n";
+            teks += "*DAFTAR HADIR:*\n";
+
+            data.daftarHadir.forEach((item, index) => {
+                const infoPemain = dataPemain.find(p => p.nama === item.nama) || { noPunggung: '-', nickname: '' };
+                const bayar = parseInt(item.bayar) || 0;
+                totalMasuk += bayar;
+                teks += `${index + 1}. [#${infoPemain.noPunggung || '-'}] ${item.nama} (${infoPemain.nickname}) - Rp ${bayar.toLocaleString('id-ID')}\n`;
+            });
+
+            if (data.daftarPengeluaran.length > 0) {
+                teks += "\n*PENGELUARAN PERTEMUAN INI:*\n";
+                data.daftarPengeluaran.forEach((k) => {
+                    totalKeluar += k.amount;
+                    teks += `• ${k.desc}: -Rp ${k.amount.toLocaleString('id-ID')}\n`;
+                });
+            }
+
+            teks += "------------------------------------\n";
+            teks += `*Total Hadir:* ${data.daftarHadir.length} Pemain\n`;
+            teks += `*Kas Masuk Pertemuan:* Rp ${totalMasuk.toLocaleString('id-ID')}\n`;
+            teks += `*Pengeluaran Pertemuan:* Rp ${totalKeluar.toLocaleString('id-ID')}\n`;
+            teks += `*Sisa Kas Pertemuan:* Rp ${(totalMasuk - totalKeluar).toLocaleString('id-ID')}\n`;
+            teks += "------------------------------------\n";
+            teks += `🏆 *TOTAL KAS KLUB (AKUMULASI):* Rp ${hitungTotalKasKlubSemua().toLocaleString('id-ID')}\n`;
+
+            window.open(`https://wa.me/?text=${encodeURIComponent(teks)}`, '_blank');
+        }
+
+        function prosesCopasMassal() {
+            if (!isAdmin) return;
+            const rawText = document.getElementById('inputCopas').value.trim();
+            if (!rawText) return;
+
+            rawText.split('\n').forEach(baris => {
+                let item = baris.trim();
+                if (!item) return;
+
+                let noPunggung = ''; let nama = '';
+                let bagian = item.split(/\t|,|;|\s{2,}/);
+
+                if (bagian.length >= 2) {
+                    if (!isNaN(bagian[0].trim()) && bagian[0].trim() !== '') {
+                        noPunggung = bagian[0].trim();
+                        nama = bagian.slice(1).join(' ').trim();
+                    } else {
+                        nama = bagian.join(' ').trim();
+                    }
+                } else {
+                    let match = item.match(/^([\d,\.]+)\s+(.+)$/);
+                    if (match) {
+                        noPunggung = match[1];
+                        nama = match[2].trim();
+                    } else {
+                        nama = item;
+                    }
+                }
+
+                if (nama && !dataPemain.some(p => p.nama.toLowerCase() === nama.toLowerCase())) {
+                    dataPemain.push({ noPunggung, nama, nickname: nama, bio: "Pemain resmi Cianjur Pharmacy FC.", foto: "", fotoLain: [] });
+                }
+            });
+
+            document.getElementById('inputCopas').value = '';
+            simpanData();
+            alert('Data anggota berhasil diimpor!');
+        }
+
+        function tambahPemain() {
+            if (!isAdmin) return;
+            const inputNama = document.getElementById('inputNama');
+            const inputNo = document.getElementById('inputNoPunggung');
+            const inputNickname = document.getElementById('inputNickname');
+            const inputBio = document.getElementById('inputBio');
+
+            const nama = inputNama.value.trim();
+            if(nama) {
+                const nickname = inputNickname.value.trim() || nama;
+                const bio = inputBio.value.trim() || "Pemain resmi Cianjur Pharmacy FC.";
+                
+                dataPemain.push({ 
+                    noPunggung: inputNo.value.trim(), 
+                    nama: nama, 
+                    nickname: nickname, 
+                    bio: bio, 
+                    foto: "",
+                    fotoLain: []
+                });
+
+                inputNama.value = ''; 
+                inputNo.value = ''; 
+                inputNickname.value = ''; 
+                inputBio.value = '';
+                simpanData();
+                alert('Pemain berhasil ditambahkan!');
+            } else {
+                alert('Nama lengkap pemain harus diisi!');
+            }
+        }
+
+        function hapusPemain(index) {
+            if (!isAdmin) return;
+            if(confirm(`Hapus ${dataPemain[index].nama}?`)) {
+                dataPemain.splice(index, 1);
+                simpanData();
+            }
+        }
+
+        applyAdminMode();
+        setTab('beranda');
+    </script>
+</body>
+</html>
